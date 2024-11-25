@@ -2,6 +2,10 @@ import { redirect } from 'next/navigation'
 
 import { createClient } from '@/utils/supabase/server'
 
+import {Button} from '@nextui-org/button';
+
+import { logout } from './actions'
+
 export default async function PrivatePage() {
   const supabase = await createClient()
 
@@ -10,5 +14,15 @@ export default async function PrivatePage() {
     redirect('/login')
   }
 
-  return <p>Hello {data.user.email}</p>
+  return (
+    <div>
+        <h1>Private Page</h1>
+        <p>Hello {data.user.email}</p>
+        <form onSubmit={logout}>
+            <Button type="submit">
+                Log out
+            </Button>
+        </form>
+    </div>
+  )
 }

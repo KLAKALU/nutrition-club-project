@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 
-import UserList from '../utils/userlist/userlist';
+import UserList from '@/utils/userlist/userlist';
+
+import  BodyGraph  from '@/utils/graph/bodyGraph';
 
 export default function Home() {
 
@@ -16,8 +18,11 @@ export default function Home() {
     <div className="">
       <main className="">
         <div className="flex flex-row">
-          <div>
-            <UserList rootUserId = {handleRootUserChange} /> 
+          <div className='w-[20vw]'>
+            <UserList rootUserIdChange = {handleRootUserChange} /> 
+          </div>
+          <div className="h-screen w-[40vw]">
+            <BodyGraph/>
           </div>
         </div>
       </main>

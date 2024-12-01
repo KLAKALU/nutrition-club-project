@@ -5,15 +5,15 @@ import { users } from "../../mock/userData"
 import { useState } from "react"
 
 interface ChildProps {
-    rootUserId: (value: number) => void;
+    rootUserIdChange: (value: number) => void;
 }
 
-export default function UserList({rootUserId}: ChildProps) {
+export default function UserList({rootUserIdChange}: ChildProps) {
     const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
 
     const handleUserChange = (newValue: number) => {
         setSelectedUserId(newValue)
-        rootUserId(newValue)
+        rootUserIdChange(newValue)
     }
 
     const  TopContent = () => {

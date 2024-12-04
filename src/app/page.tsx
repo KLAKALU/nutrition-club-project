@@ -1,21 +1,36 @@
 'use client'
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import UserList from '@/utils/userlist/userlist';
 
 import BodyGraph from '@/utils/graph/bodyGraph';
 import NutritionGraph from '@/utils/graph/nutritionGraph';
 
-import { graphProps } from '@/types/types';
+import { graphProps, User } from '@/types/types';
+import { getPlayerList } from '@/app/actions';
 
 export default function Home() {
 
-  const [rootUserId, setRootUserId] = useState<number>();
+  const [rootUserId, setRootUserId] = useState<string>();
 
-  const handleRootUserChange = (newValue: number) => {
+  const [playerList, setPlayerList] = useState<User[]>([]);
+
+  const handleRootUserChange = (newValue: string) => {
     setRootUserId(newValue);
   };
+
+  useEffect(() => {
+    const fetchPlayerList = async () => {
+      try {
+        const players = await getPlayerList();
+        setPlayerList(players);
+      } catch (error) {
+      }
+    };
+    fetchPlayerList();
+  }, []);
+  console.log(playerList);
 
   const graphProps1: graphProps = {
     list1: [9, 5, 18, 7, 21, 7, 7, 14, 9, 12, 4, 7, 15, 2],
@@ -28,12 +43,14 @@ export default function Home() {
     list3: [23, 17, 25, 18, 6, 26, 52, 17, 23, 19, 24, 12, 24, 5]
   };
 
+
+
   return (
     <div className="">
       <main className="">
         <div className="flex flex-row">
           <div className='w-[20vw]'>
-            <UserList rootUserIdChange={handleRootUserChange} />
+            <UserList playerList = {playerList} rootUserIdChange={handleRootUserChange} />
           </div>
           <div>
             <div className='w-hull bg-gray-200'>今月の選手データ</div>

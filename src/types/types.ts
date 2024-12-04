@@ -3,3 +3,37 @@ export interface graphProps {
     list2: number[];
     list3: number[];
 }
+
+export interface User {
+    id: string;
+    name: string;
+    age: number;
+    club: string;
+}
+
+export interface bodyComposition {
+    month: number;
+    weight: number;
+    muscle: number;
+    fat: number;
+}
+
+export type daytime = "breakfast" | "lunch" | "dinner";
+
+export interface nutrition {
+    daytime: daytime;
+    energy: number;
+    protein: number;
+    fat: number;
+    carbohydrate: number;
+    calcium: number;
+    iron: number;
+    zinc: number;
+    vitaminA: number;
+    vitaminD: number;
+    vitaminE: number;
+    vitaminK: number;
+    vitaminB1: number;
+    vitaminB2: number;
+    vitaminC: number;
+}

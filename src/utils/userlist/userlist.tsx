@@ -1,30 +1,31 @@
 "use client"
 import { Listbox, ListboxItem,} from "@nextui-org/react"
 import {Card, CardHeader, CardBody} from "@nextui-org/react"
-import { users } from "../../mock/userData"
+import { User } from "../../types/types"
 import { useState } from "react"
 
 interface ChildProps {
-    rootUserIdChange: (value: number) => void;
+    rootUserIdChange: (value: string) => void;
+    playerList: User[];
 }
 
-export default function UserList({rootUserIdChange}: ChildProps) {
-    const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
+export default function UserList({ rootUserIdChange, playerList }: ChildProps) {
+    const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
 
-    const handleUserChange = (newValue: number) => {
+    const handleUserChange = (newValue: string) => {
         setSelectedUserId(newValue)
         rootUserIdChange(newValue)
     }
 
     const  TopContent = () => {
-        const user = users.find((user) => user.id === selectedUserId)
+        const user = playerList.find((user) => user.id === selectedUserId)
+        console.log(user)
         return (
             <Card>
                 <CardHeader>
                     <div>{user?.name}</div>
                 </CardHeader>
                 <CardBody>
-                    <div>{user?.age}</div>
                     <div>{user?.club}</div>
                 </CardBody>
             </Card>
@@ -33,9 +34,9 @@ export default function UserList({rootUserIdChange}: ChildProps) {
 
     return (
         <Listbox
-        items={users}
+        items={playerList}
         topContent = {<TopContent/>}
-        onAction={(key) => handleUserChange(Number(key))}
+        onAction={(key) => handleUserChange(String(key))}
         >
             {(item) => (
                 <ListboxItem key={item.id} textValue={item.name}>

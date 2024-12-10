@@ -1,14 +1,15 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 
 import UserList from '@/utils/userlist/userlist';
 
 import BodyGraph from '@/utils/graph/bodyGraph';
 import NutritionGraph from '@/utils/graph/nutritionGraph';
 
-import { graphProps, User } from '@/types/types';
-import { getPlayerList } from '@/app/actions';
+import { graphProps, User,BodyComposition } from '@/types/types';
+import { getPlayerList,getPlayerBodyComposition } from '@/app/actions';
+
 
 export default function Home() {
 
@@ -16,11 +17,10 @@ export default function Home() {
 
   const [playerList, setPlayerList] = useState<User[]>([]);
 
-  const handleRootUserChange = (newValue: string) => {
-    setRootUserId(newValue);
-  };
+  const [bodyComposition, setBodyComposition] = useState<BodyComposition[]>([]);
 
   useEffect(() => {
+    console.log("fetchPlayerList")
     const fetchPlayerList = async () => {
       try {
         const players = await getPlayerList();
@@ -31,6 +31,26 @@ export default function Home() {
     fetchPlayerList();
   }, []);
   console.log(playerList);
+
+  useEffect(() => {
+    const fetchBodyComposition = async () => {
+      console.log("fetchBodyComposition")
+      try {
+        if (rootUserId) {
+          const bodyComposition = await getPlayerBodyComposition(rootUserId);
+          setBodyComposition(bodyComposition);
+        }
+      } catch (error) {
+      }
+    }
+    fetchBodyComposition();
+  }, [rootUserId]);
+
+  console.log(bodyComposition);
+
+  const handleRootUserChange = (newValue: string) => {
+    setRootUserId(newValue);
+  };
 
   const graphProps1: graphProps = {
     list1: [9, 5, 18, 7, 21, 7, 7, 14, 9, 12, 4, 7, 15, 2],
@@ -65,7 +85,7 @@ export default function Home() {
             </div>
             <div className='w-hull bg-gray-200'>体組成</div>
             <div className="w-[35vw]">
-              <BodyGraph />
+              <BodyGraph bodyComposition = {bodyComposition}/>
             </div>
           </div>
         </div>

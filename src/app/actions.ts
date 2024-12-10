@@ -20,8 +20,13 @@ export async function getPlayerList() {
 export async function getPlayerBodyComposition(playerId: string) {
     const supabase = await createClient()
 
-    const {data: playerBodyComposition, error} = await supabase.from('body_composition')
-        .select('player_id, weight, height, body_fat, muscle_mass, bone_mass, water_mass, date')
+    const {data, error} = await supabase
+        .from('body_composition')
+        .select('year_month, weight, muscle_mass, body_fat')
         .eq('player_id', playerId)
-        .order('date', {ascending: false})
+        .limit(6)
+        if (error) {
+            redirect('/error')
+          }
+    return data
 }

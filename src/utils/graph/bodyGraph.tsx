@@ -15,6 +15,10 @@ import { Chart } from "react-chartjs-2";
 
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
+import { BodyComposition } from "@/types/types";
+
+import dayjs from "dayjs";
+
 ChartJS.register(
   LinearScale,
   CategoryScale,
@@ -28,8 +32,19 @@ ChartJS.register(
   Title,
   ChartDataLabels
 );
-  
-  const labels = ["February", "March", "April", "May", "June", "July"];
+
+interface BodyGraphProps {
+  bodyComposition: BodyComposition[];
+}
+
+export default function BodyGraph({ bodyComposition }: BodyGraphProps) {
+  console.log(bodyComposition);
+  if (!bodyComposition.length) {
+    console.log("データがありません");
+    return <div>データがありません</div>;
+  }
+  const labels = bodyComposition.map((data) => dayjs(data.year_month).format("MMM"));
+  //const labels = ["February", "March", "April", "May", "June", "July"];
   
   const data = {
     labels,
@@ -40,7 +55,7 @@ ChartJS.register(
         borderColor: "rgb(255, 99, 132)",
         borderWidth: 2,
         fill: false,
-        data: [10.2, 15.2, 15.4, 15.9, 16.2, 16.0],
+        data: [bodyComposition.map((data) => data.body_fat)],
         yAxisID: "y"
       },
       {
@@ -49,14 +64,14 @@ ChartJS.register(
         backgroundColor: "rgb(75, 192, 192)",
         borderColor: "white",
         borderWidth: 2,
-        data: [80.4, 80.2, 80.1, 79.3, 78.2, 80.1],
+        data: [bodyComposition.map((data) => data.weight)],
         yAxisID: "y1"
       },
       {
         type: "bar",
         label: "筋肉",
         backgroundColor: "rgb(53, 162, 235)",
-        data: [70.3, 72.3, 71.3, 70.5, 70.2, 69.3],
+        data: [bodyComposition.map((data) => data.muscle_mass)],
         yAxisID: "y1"
       }
     ]
@@ -92,8 +107,6 @@ ChartJS.register(
       }
     }
   };
-  
-export default function BodyGraph() {
     return (
       <div className="w-[500px]">
         <Chart type={"bar"} data={data} options={options} />

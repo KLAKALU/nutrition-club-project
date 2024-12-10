@@ -11,11 +11,11 @@ export interface User {
     club: string;
 }
 
-export interface bodyComposition {
-    month: number;
+export interface BodyComposition {
+    year_month: Date;
     weight: number;
-    muscle: number;
-    fat: number;
+    muscle_mass: number;
+    body_fat: number;
 }
 
 export type daytime = "breakfast" | "lunch" | "dinner";

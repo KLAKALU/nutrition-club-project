@@ -1,7 +1,5 @@
-export interface graphProps {
-    list1: number[];
-    list2: number[];
-    list3: number[];
+export interface NutritionGraphProps {
+    graphprops: Nutrition[];
 }
 
 export interface User {
@@ -18,10 +16,11 @@ export interface BodyComposition {
     body_fat: number;
 }
 
-export type daytime = "breakfast" | "lunch" | "dinner";
+type MealType = "breakfast" | "lunch" | "dinner";
 
-export interface nutrition {
-    daytime: daytime;
+export interface Nutrition {
+    is_training_day: boolean;
+    meal_type: MealType;
     energy: number;
     protein: number;
     fat: number;

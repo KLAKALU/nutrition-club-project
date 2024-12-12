@@ -45,6 +45,9 @@ export default function BodyGraph({ bodyComposition }: BodyGraphProps) {
   }
   const labels = bodyComposition.map((data) => dayjs(data.year_month).format("MMM"));
   //const labels = ["February", "March", "April", "May", "June", "July"];
+  const bodyFatList = ([bodyComposition.map((data) => data.body_fat)])
+  const bodyWeightList = ([bodyComposition.map((data) => data.weight)])
+  const muscleMassList = ([bodyComposition.map((data) => data.muscle_mass)])
   
   const data = {
     labels,
@@ -55,7 +58,7 @@ export default function BodyGraph({ bodyComposition }: BodyGraphProps) {
         borderColor: "rgb(255, 99, 132)",
         borderWidth: 2,
         fill: false,
-        data: [bodyComposition.map((data) => data.body_fat)],
+        data: bodyFatList[0],
         yAxisID: "y"
       },
       {
@@ -64,14 +67,14 @@ export default function BodyGraph({ bodyComposition }: BodyGraphProps) {
         backgroundColor: "rgb(75, 192, 192)",
         borderColor: "white",
         borderWidth: 2,
-        data: [bodyComposition.map((data) => data.weight)],
+        data: bodyWeightList[0],
         yAxisID: "y1"
       },
       {
         type: "bar",
         label: "筋肉",
         backgroundColor: "rgb(53, 162, 235)",
-        data: [bodyComposition.map((data) => data.muscle_mass)],
+        data: muscleMassList[0],
         yAxisID: "y1"
       }
     ]

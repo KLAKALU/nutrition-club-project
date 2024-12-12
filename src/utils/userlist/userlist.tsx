@@ -19,7 +19,7 @@ export default function UserList({ rootUserIdChange, playerList }: ChildProps) {
 
     const  TopContent = () => {
         const user = playerList.find((user) => user.id === selectedUserId)
-        console.log(user)
+        console.log(user ? user.name : "No user selected")
         return (
             <Card>
                 <CardHeader>

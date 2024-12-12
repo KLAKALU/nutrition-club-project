@@ -7,8 +7,11 @@ import UserList from '@/utils/userlist/userlist';
 import BodyGraph from '@/utils/graph/bodyGraph';
 import NutritionGraph from '@/utils/graph/nutritionGraph';
 
+import {Input} from "@nextui-org/input";
+
 import { User,BodyComposition, Nutrition } from '@/types/types';
-import { getPlayerList,getPlayerBodyComposition, getPlayerNutrition } from '@/app/actions';
+import { getPlayerList,getPlayerBodyComposition, getPlayerNutrition } from '@/app/serverActions';
+import { uploadNutrition }   from '@/app/clientActions';
 
 
 export default function Home() {
@@ -71,6 +74,11 @@ export default function Home() {
 
   const trainingDayNutrition = nutrition.filter((n) => n.is_training_day);
   const nonTrainingDayNutrition = nutrition.filter((n) => !n.is_training_day);
+  const handleFileChange = (is_training_day: boolean) => (event) => {
+    if (rootUserId) {
+      uploadNutrition(rootUserId, bodyComposition.slice(-1)[0], is_training_day, event);
+    }
+  };
 
   return (
     <div className="">
@@ -88,6 +96,14 @@ export default function Home() {
               </div>
               <div className='w-[35vw]'>
                 <NutritionGraph graphprops={nonTrainingDayNutrition} />
+              </div>
+            </div>
+            <div className='flex flex-row'>
+              <div className='w-[35vw]'>
+              {rootUserId ? <Input type="file" onChange={handleFileChange(true)}></Input>: null}
+              </div>
+              <div className='w-[35vw]'>
+              {rootUserId ? <Input type="file" onChange={handleFileChange(false)}></Input>: null}
               </div>
             </div>
             <div className='w-hull bg-gray-200'>体組成</div>

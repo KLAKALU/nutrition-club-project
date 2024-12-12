@@ -19,8 +19,8 @@ export interface BodyComposition {
 type MealType = "breakfast" | "lunch" | "dinner";
 
 export interface Nutrition {
-    is_training_day: boolean;
-    meal_type: MealType;
+    is_training_day?: boolean;
+    meal_type?: MealType;
     energy: number;
     protein: number;
     fat: number;

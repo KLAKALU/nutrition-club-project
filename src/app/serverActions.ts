@@ -26,6 +26,7 @@ export async function getPlayerBodyComposition(playerId: string) {
         .select('year_month, weight, muscle_mass, body_fat')
         .eq('player_id', playerId)
         .limit(6)
+        .order('year_month')
         if (error) {
             redirect('/error')
           }

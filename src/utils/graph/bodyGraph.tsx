@@ -18,6 +18,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { BodyComposition } from "@/types/types";
 
 import dayjs from "dayjs";
+import { body } from "framer-motion/client";
 
 ChartJS.register(
   LinearScale,
@@ -38,6 +39,7 @@ interface BodyGraphProps {
 }
 
 export default function BodyGraph({ bodyComposition }: BodyGraphProps) {
+  bodyComposition = bodyComposition.reverse();
   console.log(bodyComposition);
   if (!bodyComposition.length) {
     console.log("データがありません");

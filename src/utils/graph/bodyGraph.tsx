@@ -18,7 +18,6 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { BodyComposition } from "@/types/types";
 
 import dayjs from "dayjs";
-import { body } from "framer-motion/client";
 
 ChartJS.register(
   LinearScale,

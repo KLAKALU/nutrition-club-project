@@ -67,7 +67,7 @@ export function uploadNutrition(userId: string, playerBodyComposition: BodyCompo
     console.log(csvFile);
     const reader = new FileReader();
     reader.readAsText(csvFile);
-    const nutrition = reader.onload = async () => {
+    reader.onload = async () => {
         const csv = reader.result as string;
         console.log(csv);
         const nutrition = csvToObject(csv);
@@ -86,6 +86,9 @@ export function uploadNutrition(userId: string, playerBodyComposition: BodyCompo
                 {...lunchNutrition, meal_type_id: 2, player_id: userId, year: dayjs(playerBodyComposition.year_month).format("YYYY"), month: dayjs(playerBodyComposition.year_month).format("M")},
                 {...dinnerNutrition, meal_type_id: 3, player_id: userId, year: dayjs(playerBodyComposition.year_month).format("YYYY"), month: dayjs(playerBodyComposition.year_month).format("M")}
             ]);
+        if (data){
+            console.log(data);
+        }
         if (error) {
             console.log(error);
         }

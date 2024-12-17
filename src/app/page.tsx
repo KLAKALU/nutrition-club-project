@@ -56,9 +56,7 @@ export default function Home() {
         if (rootUserId) {
           console.log("fetchNutrition")
           const nutrition:Nutrition[] = await getPlayerNutrition(rootUserId, new Date());
-          if (nutrition) {
-            setNutrition(nutrition);
-          }
+          setNutrition(nutrition);
 
         }
       } catch (error) {

@@ -73,7 +73,7 @@ export default function Home() {
 
   const trainingDayNutrition = nutrition.filter((n) => n.is_training_day);
   const nonTrainingDayNutrition = nutrition.filter((n) => !n.is_training_day);
-  const handleFileChange = (is_training_day: boolean) => (event) => {
+  const handleFileChange = (is_training_day: boolean) => (event:React.ChangeEvent<HTMLInputElement>) => {
     if (rootUserId) {
       uploadNutrition(rootUserId, bodyComposition.slice(-1)[0], is_training_day, event);
     }

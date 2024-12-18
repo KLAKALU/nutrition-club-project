@@ -61,7 +61,7 @@ function calculateNutrition(nutrition: Nutrition, playerBodyComposition: BodyCom
 
 }
 
-export function uploadNutrition(userId: string, playerBodyComposition: BodyComposition, is_training_day: boolean, event){
+export function uploadNutrition(userId: string, playerBodyComposition: BodyComposition, is_training_day: boolean, event: React.ChangeEvent<HTMLInputElement>){
     console.log("uploadNutrition");
     const csvFile:File = event.target.files[0];
     console.log(csvFile);

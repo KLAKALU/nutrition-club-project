@@ -68,7 +68,7 @@ const labels = ["エネルギー", "タンパク質", "脂質", "炭水化物", 
       const options = {
         plugins: {
           legend: {
-            position: "bottom"
+            position: 'bottom' as const,
           }
         },
         responsive: true,

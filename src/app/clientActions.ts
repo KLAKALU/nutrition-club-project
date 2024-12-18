@@ -8,9 +8,9 @@ import { Nutrition, BodyComposition } from '@/types/types';
 function csvToObject(csv: string){
     const records = parse(csv, { columns: true});
     console.log(records);
-    const selectedData = records.filter((n) => n['食事区分'] === '朝食合計' || n['食事区分'] === '昼食合計' || n['食事区分'] === '夕食合計');
+    const selectedData = records.filter((n: { [x: string]: string; }) => n['食事区分'] === '朝食合計' || n['食事区分'] === '昼食合計' || n['食事区分'] === '夕食合計');
 
-    const nutrition =  selectedData.map((record) => {
+    const nutrition: Nutrition[] =  selectedData.map((record: { [x: string]: number; }) => {
         return {
             energy: record['エネルギー kcal'],
             protein: record['アミノ酸組成によるたんぱく質 g'],
@@ -31,7 +31,7 @@ function csvToObject(csv: string){
     return nutrition;
 }
 
-function calculateNutrition(nutrition, playerBodyComposition: BodyComposition, is_training_day: boolean){
+function calculateNutrition(nutrition: Nutrition, playerBodyComposition: BodyComposition, is_training_day: boolean){
     const nonFatBodyWeight = playerBodyComposition.weight * (1 - (playerBodyComposition.body_fat / 100));
     const totalEnergy = nonFatBodyWeight * 28.5 * (is_training_day ? 2.0 : 1.75);
     const totalProtein = nonFatBodyWeight * 2.2;

@@ -67,11 +67,11 @@ const labels = ["エネルギー", "タンパク質", "脂質", "炭水化物", 
     };
     
   export default function NutritionGraph(graphprops: NutritionGraphProps) {
-      console.log(graphprops.graphprops);
       if (!graphprops.graphprops.length) {
         console.log("データがありません");
         return <div>データがありません</div>
       }
+      console.log(graphprops.graphprops);
       const breakfastNutrition = graphprops.graphprops.find(data => data.meal_type === "breakfast");
       const breakfastNutritionList = breakfastNutrition ? NutritionObjectToList(breakfastNutrition) : [];
       const lunchNutrition = graphprops.graphprops.find(data => data.meal_type === "lunch");

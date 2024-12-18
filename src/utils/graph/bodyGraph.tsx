@@ -39,11 +39,11 @@ interface BodyGraphProps {
 
 export default function BodyGraph({ bodyComposition }: BodyGraphProps) {
   bodyComposition = bodyComposition.reverse();
-  console.log(bodyComposition);
   if (!bodyComposition.length) {
     console.log("データがありません");
     return <div>データがありません</div>;
   }
+  console.log(bodyComposition);
   const labels = bodyComposition.map((data) => dayjs(data.year_month).format("MMM"));
   //const labels = ["February", "March", "April", "May", "June", "July"];
   const bodyFatList = ([bodyComposition.map((data) => data.body_fat)])

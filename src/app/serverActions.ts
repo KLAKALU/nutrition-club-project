@@ -33,7 +33,7 @@ export async function getPlayerBodyComposition(playerId: string) {
     return data
 }
 
-export async function getPlayerNutrition(playerId: string, yearMonth: Date) {
+export async function getPlayerNutrition(playerId: string, yearMonth: Date): Promise<Nutrition[]> {
     const supabase = await createClient()
 
     const {data, error} = await supabase
@@ -48,7 +48,7 @@ export async function getPlayerNutrition(playerId: string, yearMonth: Date) {
     if (!data) {
         return []
     }
-    const NutritionData:Nutrition = data.map(item => ({
+    const NutritionData:Nutrition[] = data.map(item => ({
         ...item,
         meal_type: item.meal_type?.type || null}))
     return NutritionData

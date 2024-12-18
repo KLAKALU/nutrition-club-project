@@ -25,7 +25,7 @@ export default function Home() {
   const [nutrition, setNutrition] = useState<Nutrition[]>([]);
 
   useEffect(() => {
-    console.log("fetchPlayerList")
+    console.log("useEffect1Called")
     const fetchPlayerList = async () => {
       try {
         const players = await getPlayerList();
@@ -38,6 +38,7 @@ export default function Home() {
   console.log(playerList);
 
   useEffect(() => {
+    console.log("useEffect2Called")
     const fetchBodyComposition = async () => {
       console.log("fetchBodyComposition")
       try {
@@ -55,9 +56,7 @@ export default function Home() {
         if (rootUserId) {
           console.log("fetchNutrition")
           const nutrition:Nutrition[] = await getPlayerNutrition(rootUserId, new Date());
-          if (nutrition) {
-            setNutrition(nutrition);
-          }
+          setNutrition(nutrition);
 
         }
       } catch (error) {

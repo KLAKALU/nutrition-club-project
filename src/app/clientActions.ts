@@ -63,6 +63,10 @@ function calculateNutrition(nutrition: Nutrition, playerBodyComposition: BodyCom
 
 export function uploadNutrition(userId: string, playerBodyComposition: BodyComposition, is_training_day: boolean, event: React.ChangeEvent<HTMLInputElement>){
     console.log("uploadNutrition");
+    if (!event.target.files) {
+        alert("ファイルが選択されていません");
+        return;
+    }
     const csvFile:File = event.target.files[0];
     console.log(csvFile);
     const reader = new FileReader();

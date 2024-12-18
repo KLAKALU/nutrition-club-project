@@ -49,22 +49,7 @@ ChartJS.register(
     
 const labels = ["エネルギー", "タンパク質", "脂質", "炭水化物", "カルシウム", "鉄","亜鉛", "ビタミンA", "ビタミンD", "ビタミンE", "ビタミンK", "ビタミンB1", "ビタミンB2", "ビタミンC"];
     
-    const options = {
-      plugins: {
-        legend: {
-          position: "bottom"
-        }
-      },
-      responsive: true,
-      scales: {
-        x: {
-          stacked: true
-        },
-        y: {
-          stacked: true
-        }
-      }
-    };
+    
     
   export default function NutritionGraph(graphprops: NutritionGraphProps) {
       if (!graphprops.graphprops.length) {
@@ -79,6 +64,33 @@ const labels = ["エネルギー", "タンパク質", "脂質", "炭水化物", 
       const dinnerNutrition = graphprops.graphprops.find(data => data.meal_type === "dinner");
       const dinnerNutritionList = dinnerNutrition ? NutritionObjectToList(dinnerNutrition) : [];
       console.log(breakfastNutritionList);
+
+      const options = {
+        plugins: {
+          legend: {
+            position: "bottom"
+          }
+        },
+        responsive: true,
+        scales: {
+          x: {
+            stacked: true
+          },
+          y: {
+            max: 100,
+            stacked: true,
+            grid: {
+              color: function(context: { tick: { value: number; }; }) {
+                if (context.tick.value === 100) {
+                  return "red";
+                }
+                return "gray";
+              }
+            }
+          }
+        }
+      };
+
     const data = {
         labels,
         datasets: [ 

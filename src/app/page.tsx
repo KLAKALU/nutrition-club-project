@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 import UserList from '@/utils/userlist/userlist';
 
-import BodyGraph from '@/utils/graph/bodyGraph';
+import BodyCompositionGraph from '@/utils/graph/bodyCompositionGraph';
 import NutritionGraph from '@/utils/graph/nutritionGraph';
 
 import {Input} from "@nextui-org/input";
@@ -108,7 +108,7 @@ export default function Home() {
             </div>
             <div className='w-hull bg-gray-200'>体組成</div>
             <div className="w-[35vw]">
-              <BodyGraph bodyComposition = {bodyComposition}/>
+              <BodyCompositionGraph bodyComposition = {bodyComposition}/>
             </div>
           </div>
         </div>

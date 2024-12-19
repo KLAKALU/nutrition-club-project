@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 
 import { Nutrition, BodyComposition } from '@/types/types';
 
-function csvToObject(csv: string){
+function dataToObject(csv: string){
     const records = parse(csv, { columns: true});
     console.log(records);
     const selectedData = records.filter((n: { [x: string]: string; }) => n['食事区分'] === '朝食合計' || n['食事区分'] === '昼食合計' || n['食事区分'] === '夕食合計');
@@ -74,7 +74,7 @@ export function uploadNutrition(userId: string, playerBodyComposition: BodyCompo
     reader.onload = async () => {
         const csv = reader.result as string;
         console.log(csv);
-        const nutrition = csvToObject(csv);
+        const nutrition = dataToObject(csv);
         console.log(nutrition);
         const breakfastNutrition = calculateNutrition(nutrition[0], playerBodyComposition, is_training_day);
         const lunchNutrition = calculateNutrition(nutrition[1], playerBodyComposition, is_training_day);

@@ -37,7 +37,7 @@ interface BodyGraphProps {
   bodyComposition: BodyComposition[];
 }
 
-export default function BodyGraph({ bodyComposition }: BodyGraphProps) {
+export default function BodyCompositionGraph({ bodyComposition }: BodyGraphProps) {
   bodyComposition = bodyComposition.reverse();
   if (!bodyComposition.length) {
     console.log("データがありません");

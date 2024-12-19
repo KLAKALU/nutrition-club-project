@@ -38,14 +38,15 @@ export default function Home() {
   console.log(playerList);
 
   useEffect(() => {
+    if (!rootUserId) {
+      return;
+    }
     console.log("useEffect2Called")
     const fetchBodyComposition = async () => {
       console.log("fetchBodyComposition")
       try {
-        if (rootUserId) {
-          const bodyComposition = await getPlayerBodyComposition(rootUserId);
-          setBodyComposition(bodyComposition);
-        }
+        const bodyComposition = await getPlayerBodyComposition(rootUserId);
+        setBodyComposition(bodyComposition);
       } catch (error) {
       }
     }
@@ -53,12 +54,9 @@ export default function Home() {
 
     const fetchNutrition = async () => {
       try {
-        if (rootUserId) {
-          console.log("fetchNutrition")
-          const nutrition: Nutrition[] = await getPlayerNutrition(rootUserId, new Date());
-          setNutrition(nutrition);
-
-        }
+        console.log("fetchNutrition")
+        const nutrition: Nutrition[] = await getPlayerNutrition(rootUserId, new Date());
+        setNutrition(nutrition);
       } catch (error) {
       }
     }

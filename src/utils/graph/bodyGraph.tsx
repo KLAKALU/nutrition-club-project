@@ -54,7 +54,7 @@ export default function BodyGraph({ bodyComposition }: BodyGraphProps) {
     labels,
     datasets: [ 
       {
-        type: "line",
+        type: "line" as const,
         label: "体脂肪",
         borderColor: "rgb(255, 99, 132)",
         borderWidth: 2,
@@ -63,7 +63,7 @@ export default function BodyGraph({ bodyComposition }: BodyGraphProps) {
         yAxisID: "y"
       },
       {
-        type: "bar",
+        type: "bar" as const,
         label: "体重",
         backgroundColor: "rgb(75, 192, 192)",
         borderColor: "white",
@@ -72,7 +72,7 @@ export default function BodyGraph({ bodyComposition }: BodyGraphProps) {
         yAxisID: "y1"
       },
       {
-        type: "bar",
+        type: "bar" as const,
         label: "筋肉",
         backgroundColor: "rgb(53, 162, 235)",
         data: muscleMassList[0],
@@ -85,12 +85,12 @@ export default function BodyGraph({ bodyComposition }: BodyGraphProps) {
     plugins: {
       ChartDataLabels,
       datalabels: {
-        color: "black",
-        align: 'top',
+        color: "black" as const,
+        align: 'top' as const,
         offset: 4,
       },
       legend: {
-        position: "bottom"
+        position: "bottom" as const,
       }
     },
     responsive: true,
@@ -105,7 +105,7 @@ export default function BodyGraph({ bodyComposition }: BodyGraphProps) {
       },
       y1: {
         stacked: false,
-        position: "right",
+        position: "right" as const,
         max: 100,
         min: 0
       }

@@ -11,13 +11,8 @@ import {
   BarController,
   Title
 } from "chart.js";
+
 import { Chart } from "react-chartjs-2";
-
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-
-import { BodyComposition } from "@/types/types";
-
-import dayjs from "dayjs";
 
 ChartJS.register(
   LinearScale,
@@ -33,6 +28,11 @@ ChartJS.register(
   ChartDataLabels
 );
 
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+
+import { BodyComposition } from "@/types/types";
+
+import dayjs from "dayjs";
 interface BodyGraphProps {
   bodyComposition: BodyComposition[];
 }
@@ -49,10 +49,10 @@ export default function BodyCompositionGraph({ bodyComposition }: BodyGraphProps
   const bodyFatList = ([bodyComposition.map((data) => data.body_fat)])
   const bodyWeightList = ([bodyComposition.map((data) => data.weight)])
   const muscleMassList = ([bodyComposition.map((data) => data.muscle_mass)])
-  
+
   const data = {
     labels,
-    datasets: [ 
+    datasets: [
       {
         type: "line" as const,
         label: "体脂肪",
@@ -80,7 +80,7 @@ export default function BodyCompositionGraph({ bodyComposition }: BodyGraphProps
       }
     ]
   };
-  
+
   const options = {
     plugins: {
       ChartDataLabels,
@@ -111,10 +111,10 @@ export default function BodyCompositionGraph({ bodyComposition }: BodyGraphProps
       }
     }
   };
-    return (
-      <div className="w-[500px]">
-        <Chart type={"bar"} data={data} options={options} />
-      </div>
-    );
-  }
-  
+  return (
+    <div className="w-[500px]">
+      <Chart type={"bar"} data={data} options={options} />
+    </div>
+  );
+}
+

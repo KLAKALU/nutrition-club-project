@@ -7,11 +7,11 @@ import UserList from '@/utils/userlist/userlist';
 import BodyCompositionGraph from '@/utils/graph/bodyCompositionGraph';
 import NutritionGraph from '@/utils/graph/nutritionGraph';
 
-import {Input} from "@nextui-org/input";
+import { Input } from "@nextui-org/input";
 
-import { User,BodyComposition, Nutrition } from '@/types/types';
-import { getPlayerList,getPlayerBodyComposition, getPlayerNutrition } from '@/app/serverActions';
-import { uploadNutrition }   from '@/app/clientActions';
+import { User, BodyComposition, Nutrition } from '@/types/types';
+import { getPlayerList, getPlayerBodyComposition, getPlayerNutrition } from '@/app/serverActions';
+import { uploadNutrition } from '@/app/clientActions';
 
 
 export default function Home() {
@@ -55,7 +55,7 @@ export default function Home() {
       try {
         if (rootUserId) {
           console.log("fetchNutrition")
-          const nutrition:Nutrition[] = await getPlayerNutrition(rootUserId, new Date());
+          const nutrition: Nutrition[] = await getPlayerNutrition(rootUserId, new Date());
           setNutrition(nutrition);
 
         }
@@ -73,7 +73,7 @@ export default function Home() {
 
   const trainingDayNutrition = nutrition.filter((n) => n.is_training_day);
   const nonTrainingDayNutrition = nutrition.filter((n) => !n.is_training_day);
-  const handleFileChange = (is_training_day: boolean) => (event:React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (is_training_day: boolean) => (event: React.ChangeEvent<HTMLInputElement>) => {
     if (rootUserId) {
       uploadNutrition(rootUserId, bodyComposition.slice(-1)[0], is_training_day, event);
     }
@@ -84,7 +84,7 @@ export default function Home() {
       <main className="">
         <div className="flex flex-row">
           <div className='w-[20vw]'>
-            <UserList playerList = {playerList} rootUserIdChange={handleRootUserChange} />
+            <UserList playerList={playerList} rootUserIdChange={handleRootUserChange} />
           </div>
           <div>
             <div className='w-hull bg-gray-200'>今月の選手データ</div>
@@ -100,15 +100,15 @@ export default function Home() {
             </div>
             <div className='flex flex-row'>
               <div className='w-[35vw]'>
-              {rootUserId ? <Input type="file" onChange={handleFileChange(true)}></Input>: null}
+                {rootUserId ? <Input type="file" onChange={handleFileChange(true)}></Input> : null}
               </div>
               <div className='w-[35vw]'>
-              {rootUserId ? <Input type="file" onChange={handleFileChange(false)}></Input>: null}
+                {rootUserId ? <Input type="file" onChange={handleFileChange(false)}></Input> : null}
               </div>
             </div>
             <div className='w-hull bg-gray-200'>体組成</div>
             <div className="w-[35vw]">
-              <BodyCompositionGraph bodyComposition = {bodyComposition}/>
+              <BodyCompositionGraph bodyComposition={bodyComposition} />
             </div>
           </div>
         </div>

@@ -31,6 +31,7 @@ export default function Home() {
         const players = await getPlayerList();
         setPlayerList(players);
       } catch (error) {
+        alert("選手データの取得に失敗しました");
       }
     };
     fetchPlayerList();
@@ -48,6 +49,7 @@ export default function Home() {
         const bodyComposition = await getPlayerBodyComposition(rootUserId);
         setBodyComposition(bodyComposition);
       } catch (error) {
+        alert("体組成データの取得に失敗しました");
       }
     }
     fetchBodyComposition();
@@ -58,6 +60,7 @@ export default function Home() {
         const nutrition: Nutrition[] = await getPlayerNutrition(rootUserId, new Date());
         setNutrition(nutrition);
       } catch (error) {
+        alert("栄養データの取得に失敗しました");
       }
     }
     fetchNutrition();

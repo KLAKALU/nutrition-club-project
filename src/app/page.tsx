@@ -91,10 +91,11 @@ export default function Home() {
             <div className='w-hull bg-gray-200'>必須栄養素</div>
             <div className='flex flex-row h-[40vh]'>
               <div className="w-[35vw]">
+                {trainingDayNutrition.length ? <NutritionGraph graphprops={trainingDayNutrition} /> : <div>データがありません</div>}
                 <NutritionGraph graphprops={trainingDayNutrition} />
               </div>
               <div className='w-[35vw]'>
-                <NutritionGraph graphprops={nonTrainingDayNutrition} />
+                {nonTrainingDayNutrition.length ? <NutritionGraph graphprops={nonTrainingDayNutrition} /> : <div>データがありません</div>}
               </div>
             </div>
             <div className='flex flex-row'>

@@ -11,13 +11,8 @@ import {
   BarController,
   Title
 } from "chart.js";
+
 import { Chart } from "react-chartjs-2";
-
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-
-import { BodyComposition } from "@/types/types";
-
-import dayjs from "dayjs";
 
 ChartJS.register(
   LinearScale,
@@ -33,11 +28,16 @@ ChartJS.register(
   ChartDataLabels
 );
 
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+
+import { BodyComposition } from "@/types/types";
+
+import dayjs from "dayjs";
 interface BodyGraphProps {
   bodyComposition: BodyComposition[];
 }
 
-export default function BodyGraph({ bodyComposition }: BodyGraphProps) {
+export default function BodyCompositionGraph({ bodyComposition }: BodyGraphProps) {
   bodyComposition = bodyComposition.reverse();
   if (!bodyComposition.length) {
     console.log("データがありません");
@@ -49,12 +49,12 @@ export default function BodyGraph({ bodyComposition }: BodyGraphProps) {
   const bodyFatList = ([bodyComposition.map((data) => data.body_fat)])
   const bodyWeightList = ([bodyComposition.map((data) => data.weight)])
   const muscleMassList = ([bodyComposition.map((data) => data.muscle_mass)])
-  
+
   const data = {
     labels,
-    datasets: [ 
+    datasets: [
       {
-        type: "line",
+        type: "line" as const,
         label: "体脂肪",
         borderColor: "rgb(255, 99, 132)",
         borderWidth: 2,
@@ -63,7 +63,7 @@ export default function BodyGraph({ bodyComposition }: BodyGraphProps) {
         yAxisID: "y"
       },
       {
-        type: "bar",
+        type: "bar" as const,
         label: "体重",
         backgroundColor: "rgb(75, 192, 192)",
         borderColor: "white",
@@ -72,7 +72,7 @@ export default function BodyGraph({ bodyComposition }: BodyGraphProps) {
         yAxisID: "y1"
       },
       {
-        type: "bar",
+        type: "bar" as const,
         label: "筋肉",
         backgroundColor: "rgb(53, 162, 235)",
         data: muscleMassList[0],
@@ -80,17 +80,17 @@ export default function BodyGraph({ bodyComposition }: BodyGraphProps) {
       }
     ]
   };
-  
+
   const options = {
     plugins: {
       ChartDataLabels,
       datalabels: {
-        color: "black",
-        align: 'top',
+        color: "black" as const,
+        align: 'top' as const,
         offset: 4,
       },
       legend: {
-        position: "bottom"
+        position: "bottom" as const,
       }
     },
     responsive: true,
@@ -105,16 +105,16 @@ export default function BodyGraph({ bodyComposition }: BodyGraphProps) {
       },
       y1: {
         stacked: false,
-        position: "right",
+        position: "right" as const,
         max: 100,
         min: 0
       }
     }
   };
-    return (
-      <div className="w-[500px]">
-        <Chart type={"bar"} data={data} options={options} />
-      </div>
-    );
-  }
-  
+  return (
+    <div className="w-[500px]">
+      <Chart type={"bar"} data={data} options={options} />
+    </div>
+  );
+}
+

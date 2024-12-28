@@ -9,8 +9,7 @@ import {
   Tooltip,
   LineController,
   BarController,
-  Title,
-  Interaction
+  Title
 } from "chart.js";
 
 import { Chart } from "react-chartjs-2";

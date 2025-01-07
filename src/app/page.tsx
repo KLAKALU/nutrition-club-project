@@ -12,6 +12,7 @@ import { Input } from "@nextui-org/input";
 import { User, BodyComposition, Nutrition } from '@/types/types';
 import { getPlayerList, getPlayerBodyComposition, getPlayerNutrition } from '@/app/serverActions';
 import { uploadNutrition } from '@/app/clientActions';
+import dayjs from 'dayjs';
 
 
 export default function Home() {
@@ -22,9 +23,15 @@ export default function Home() {
 
   const [bodyComposition, setBodyComposition] = useState<BodyComposition[]>([]);
 
+  const [nutritionSheetDay, setNutritionSheetDay] = useState<Date>();
+
   const [nutrition, setNutrition] = useState<Nutrition[]>([]);
 
   useEffect(() => {
+    const now = dayjs();
+
+    setNutritionSheetDay(now.toDate());
+
     console.log("useEffect1Called")
     const fetchPlayerList = async () => {
       try {
@@ -88,7 +95,7 @@ export default function Home() {
             <UserList playerList={playerList} rootUserIdChange={handleRootUserChange} />
           </div>
           <div>
-            <div className='w-hull bg-gray-200'>今月の選手データ</div>
+            <div className='w-hull bg-gray-200'>{dayjs(nutritionSheetDay).format("M")}月の選手データ</div>
             <div className='w-hull bg-gray-200'>必須栄養素</div>
             <div className='flex flex-row h-[40vh]'>
               <div className="w-[35vw]">

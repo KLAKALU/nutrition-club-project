@@ -8,6 +8,7 @@ import BodyCompositionGraph from '@/utils/graph/bodyCompositionGraph';
 import NutritionGraph from '@/utils/graph/nutritionGraph';
 
 import { Input } from "@nextui-org/input";
+import {Card, CardHeader, Divider} from "@nextui-org/react"
 
 import { User, BodyComposition, Nutrition } from '@/types/types';
 import { getPlayerList, getPlayerBodyComposition, getPlayerNutrition } from '@/app/serverActions';
@@ -94,9 +95,13 @@ export default function Home() {
           <div className='w-[20vw]'>
             <UserList playerList={playerList} rootUserIdChange={handleRootUserChange} />
           </div>
-          <div>
-            <div className='w-hull bg-gray-200'>{dayjs(nutritionSheetDay).format("M")}月の選手データ</div>
-            <div className='w-hull bg-gray-200'>必須栄養素</div>
+          <Card>
+            <CardHeader className=''>
+              <span className="text-3xl font-bold">{dayjs(nutritionSheetDay).format("M")}</span>
+              <span className='pl-1'>月の栄養管理シート</span>
+            </CardHeader>
+            <Divider />
+            <div className=''>必須栄養素</div>
             <div className='flex flex-row h-[40vh]'>
               <div className="w-[35vw]">
                 {trainingDayNutrition.length ? <NutritionGraph graphprops={trainingDayNutrition} /> : <div>データがありません</div>}
@@ -113,11 +118,11 @@ export default function Home() {
                 {rootUserId ? <Input type="file" onChange={handleFileChange(false)}></Input> : null}
               </div>
             </div>
-            <div className='w-hull bg-gray-200'>体組成</div>
+            <div className=''>体組成</div>
             <div className="w-[35vw]">
               <BodyCompositionGraph bodyComposition={bodyComposition} />
             </div>
-          </div>
+          </Card>
         </div>
       </main>
     </div>

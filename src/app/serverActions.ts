@@ -4,6 +4,7 @@ import { Nutrition } from '@/types/types'
 import { createClient } from '@/utils/supabase/server'
 
 import { redirect } from 'next/navigation'
+import dayjs from 'dayjs'
 
 export async function getPlayerList() {
     const supabase = await createClient()
@@ -16,14 +17,19 @@ export async function getPlayerList() {
     return data
 }
 
-export async function getPlayerBodyComposition(playerId: string) {
+export async function getPlayerBodyComposition(playerId: string, date: Date) {
     const supabase = await createClient()
+
+    const startOfMonth = dayjs(date).subtract(1,"y").startOf('month').toISOString()
+    const endOfMonth = dayjs(date).endOf('month').toISOString()
+
     const { data, error } = await supabase
         .from('body_composition')
         .select('year_month, weight, muscle_mass, body_fat')
         .eq('player_id', playerId)
-        .limit(6)
         .order('year_month')
+        .gte('year_month', startOfMonth)
+        .lt('year_month', endOfMonth)
     if (error) {
         redirect('/error')
     }

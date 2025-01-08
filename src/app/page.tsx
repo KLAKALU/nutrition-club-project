@@ -15,6 +15,8 @@ import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { User, BodyComposition, Nutrition } from '@/types/types';
 import { getPlayerList, getPlayerBodyComposition, getPlayerNutrition } from '@/app/serverActions';
 import { uploadNutrition } from '@/app/clientActions';
+import { logout } from '@/app/serverActions';
+
 
 export default function Home() {
 
@@ -103,6 +105,11 @@ export default function Home() {
   return (
     <div className="">
       <main className="">
+      <form onSubmit={logout}>
+            <Button type="submit">
+                Log out
+            </Button>
+        </form>
         <div className="flex flex-row">
           <div className='w-[20vw]'>
             <UserList playerList={playerList} rootUserIdChange={handleRootUserChange} />

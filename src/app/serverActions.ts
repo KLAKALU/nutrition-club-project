@@ -6,6 +6,16 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import dayjs from 'dayjs'
 
+export async function logout() {
+    const supabase = await createClient()  
+    
+    const { error } = await supabase.auth.signOut({ scope: 'global' })
+    if (error) {
+      redirect('/error')
+    }
+    redirect('/')
+  }
+
 export async function getPlayerList() {
     const supabase = await createClient()
     const { data, error } = await supabase

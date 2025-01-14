@@ -123,12 +123,15 @@ export default function Home() {
           <div className='w-[20vw]'>
             <UserList playerList={playerList} rootUserIdChange={handleRootUserChange} />
           </div>
+          <div className=''>
+          <div>
           <Button onClick={decrementSheetDateMonth} isIconOnly aria-label="MonthDecrement" color="primary" variant="bordered">
             <FaAngleLeft />
           </Button>
           <Button onClick={incrementSheetDateMonth} isIconOnly aria-label="MonthIncrement" color="primary" variant="bordered">
             <FaAngleRight />
           </Button>
+          </div>
           <Card>
             <CardHeader className=''>
               <span className="text-3xl font-bold">{dayjs(nutritionSheetDay).format("M")}</span>
@@ -136,7 +139,7 @@ export default function Home() {
             </CardHeader>
             <Divider />
             <div className=''>必須栄養素</div>
-            <div className='flex flex-row h-[40vh]'>
+            <div className='flex flex-row h-[35vh]'>
               <div className="w-[35vw]">
                 {trainingDayNutrition.length ? <NutritionGraph graphprops={trainingDayNutrition} /> : <div>データがありません</div>}
               </div>
@@ -157,6 +160,7 @@ export default function Home() {
               <BodyCompositionGraph bodyComposition={bodyComposition} />
             </div>
           </Card>
+          </div>
         </div>
       </main>
     </div>

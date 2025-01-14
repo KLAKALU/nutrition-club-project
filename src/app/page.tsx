@@ -14,7 +14,7 @@ import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { createClient } from '@/utils/supabase/client';
 import { redirect } from 'next/navigation';
 
-import { User, BodyComposition, Nutrition } from '@/types/types';
+import { PlayerProfile, BodyComposition, Nutrition } from '@/types/types';
 import { getPlayerList, getPlayerBodyComposition, getPlayerNutrition } from '@/app/serverActions';
 import { uploadNutrition } from '@/app/clientActions';
 import  AdminHeader  from '@/utils/header/header';
@@ -23,7 +23,7 @@ export default function Home() {
 
   const [rootUserId, setRootUserId] = useState<string>();
 
-  const [playerList, setPlayerList] = useState<User[]>([]);
+  const [players, setPlayers] = useState<PlayerProfile[]>([]);
 
   const [bodyComposition, setBodyComposition] = useState<BodyComposition[]>([]);
 
@@ -51,14 +51,14 @@ export default function Home() {
     const fetchPlayerList = async () => {
       try {
         const players = await getPlayerList();
-        setPlayerList(players);
+        setPlayers(players);
       } catch (error) {
         alert("選手データの取得に失敗しました");
       }
     };
     fetchPlayerList();
   }, []);
-  console.log(playerList);
+  console.log(players);
 
   useEffect(() => {
     if (!rootUserId || !nutritionSheetDay) {
@@ -121,7 +121,7 @@ export default function Home() {
         <AdminHeader userEmail = {userEmail}/>
         <div className="flex flex-row">
           <div className='w-[20vw]'>
-            <UserList playerList={playerList} rootUserIdChange={handleRootUserChange} />
+            <UserList playerList={players} rootUserIdChange={handleRootUserChange} />
           </div>
           <div className=''>
           <div>

@@ -19,7 +19,7 @@ export async function logout() {
 export async function getPlayerList() {
     const supabase = await createClient()
     const { data, error } = await supabase
-        .from('players')
+        .from('player_profiles')
         .select()
     if (error) {
         redirect('/error')

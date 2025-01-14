@@ -11,12 +11,13 @@ import { Input } from "@nextui-org/input";
 import {Card, CardHeader, Divider, Button} from "@nextui-org/react"
 import dayjs from 'dayjs';
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
+import { createClient } from '@/utils/supabase/client';
+import { redirect } from 'next/navigation';
 
 import { User, BodyComposition, Nutrition } from '@/types/types';
 import { getPlayerList, getPlayerBodyComposition, getPlayerNutrition } from '@/app/serverActions';
 import { uploadNutrition } from '@/app/clientActions';
-import { logout } from '@/app/serverActions';
-
+import  AdminHeader  from '@/utils/header/header';
 
 export default function Home() {
 
@@ -30,9 +31,21 @@ export default function Home() {
 
   const [nutrition, setNutrition] = useState<Nutrition[]>([]);
 
+  const [userEmail, setUserEmail] = useState<string>("");
+
   useEffect(() => {
 
     //setNutritionSheetDay(dayjs().toDate());
+
+    const fetchUserEmail = async () => {
+      const supabase = await createClient();
+      const {data:{ user }} = await supabase.auth.getUser();
+      if (!user || !user.email) {
+        redirect('/login');
+      }
+      setUserEmail(user.email);
+    }
+    fetchUserEmail();
 
     console.log("useEffect1Called")
     const fetchPlayerList = async () => {
@@ -105,11 +118,7 @@ export default function Home() {
   return (
     <div className="">
       <main className="">
-      <form onSubmit={logout}>
-            <Button type="submit">
-                Log out
-            </Button>
-        </form>
+        <AdminHeader userEmail = {userEmail}/>
         <div className="flex flex-row">
           <div className='w-[20vw]'>
             <UserList playerList={playerList} rootUserIdChange={handleRootUserChange} />

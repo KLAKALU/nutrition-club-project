@@ -44,7 +44,7 @@ export default function LoginPage() {
                   required
                   placeholder="your@email.com"
                   startContent={<FaEnvelope />}
-                  className='py-1'
+                  className='pb-4'
                 />
             </div>
 
@@ -59,7 +59,6 @@ export default function LoginPage() {
                   required
                   placeholder="••••••••"
                   startContent={<FaLock />}
-                  className='py-1'
                 />
             </div>
             <SubmitButton />

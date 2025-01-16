@@ -4,26 +4,43 @@ import { Nutrition } from '@/types/types'
 import { createClient } from '@/utils/supabase/server'
 
 import { redirect } from 'next/navigation'
+import dayjs from 'dayjs'
+
+export async function logout() {
+    const supabase = await createClient()  
+    
+    const { error } = await supabase.auth.signOut({ scope: 'global' })
+    if (error) {
+      redirect('/error')
+    }
+    redirect('/')
+  }
 
 export async function getPlayerList() {
     const supabase = await createClient()
     const { data, error } = await supabase
-        .from('players')
+        .from('player_profiles')
         .select()
+        .eq('is_initial_setup_done', true)
     if (error) {
         redirect('/error')
     }
     return data
 }
 
-export async function getPlayerBodyComposition(playerId: string) {
+export async function getPlayerBodyComposition(playerId: string, date: Date) {
     const supabase = await createClient()
+
+    const startOfMonth = dayjs(date).subtract(1,"y").startOf('month').toISOString()
+    const endOfMonth = dayjs(date).endOf('month').toISOString()
+
     const { data, error } = await supabase
         .from('body_composition')
         .select('year_month, weight, muscle_mass, body_fat')
         .eq('player_id', playerId)
-        .limit(6)
         .order('year_month')
+        .gte('year_month', startOfMonth)
+        .lt('year_month', endOfMonth)
     if (error) {
         redirect('/error')
     }
@@ -50,3 +67,4 @@ export async function getPlayerNutrition(playerId: string, yearMonth: Date): Pro
     }))
     return NutritionData
 }
+

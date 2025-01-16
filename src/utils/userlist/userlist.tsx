@@ -1,12 +1,12 @@
 "use client"
 import { Listbox, ListboxItem,} from "@nextui-org/react"
 import {Card, CardHeader, CardBody} from "@nextui-org/react"
-import { User } from "../../types/types"
+import { PlayerProfile } from "@/types/types"
 import { useState } from "react"
 
 interface ChildProps {
     rootUserIdChange: (value: string) => void;
-    playerList: User[];
+    playerList: PlayerProfile[];
 }
 
 export default function UserList({ rootUserIdChange, playerList }: ChildProps) {
@@ -19,14 +19,25 @@ export default function UserList({ rootUserIdChange, playerList }: ChildProps) {
 
     const  TopContent = () => {
         const user = playerList.find((user) => user.id === selectedUserId)
-        console.log(user ? user.name : "No user selected")
+        console.log(user ? user.last_name : "No user selected")
+        if (!user) {
+            return (
+                <Card>
+                    <CardHeader>
+                        <div>選手を選択してください</div>
+                    </CardHeader>
+                </Card>
+            )
+        }
         return (
             <Card>
                 <CardHeader>
-                    <div>{user?.name}</div>
+                    <div className="text-3xl font-bold">{user.last_name + "　" + user.first_name}</div>
                 </CardHeader>
                 <CardBody>
-                    <div>{user?.club}</div>
+                    <div>{user.club}</div>
+                    <div className="text-small">運動負荷数値:{user.training_load}</div>
+                    <div className="text-small">非運動負荷数値:{user.non_training_load}</div>
                 </CardBody>
             </Card>
         )
@@ -39,10 +50,10 @@ export default function UserList({ rootUserIdChange, playerList }: ChildProps) {
         onAction={(key) => handleUserChange(String(key))}
         >
             {(item) => (
-                <ListboxItem key={item.id} textValue={item.name}>
+                <ListboxItem key={item.id} textValue={item.last_name + "　" + item.first_name}>
                     <div className="flex gap-2 items-center">
                         <div className="flex flex-col">
-                            <span className="text-2xl">{item.name}</span>
+                            <span className="text-2xl">{item.last_name + "　" + item.first_name}</span>
                         </div>
                     </div>
                 </ListboxItem>

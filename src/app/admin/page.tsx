@@ -2,15 +2,19 @@
 
 import { useEffect, useState } from 'react';
 
+import UserList from '@/utils/userlist/userlist';
+
 import dayjs from 'dayjs';
 import { createClient } from '@/utils/supabase/client';
 import { redirect } from 'next/navigation';
 
 import { PlayerProfile, BodyComposition, Nutrition } from '@/types/types';
 import { getPlayerList, getPlayerBodyComposition, getPlayerNutrition } from '@/app/admin/serverActions';
+import { setTrainingLoad } from '@/app/admin/clientActions';
 
 import  AdminHeader  from '@/utils/header/header';
 import NutritionCard from '@/components/nutritionCard';
+
 
 export default function Home() {
 
@@ -26,27 +30,8 @@ export default function Home() {
 
   const currentDate = dayjs().toDate();
 
-  const validateInitialSetup = async () => {
-    const supabase = await createClient();
-    const {data:{ user }} = await supabase.auth.getUser();
-    if (!user) {
-      redirect('/login');
-    }
-    const { data: playerProfileData, error: playerProfileError } = await supabase.from('player_profiles').select().eq('id', user.id);
-
-    if (playerProfileError) {
-      redirect('/error')
-    }
-    if (playerProfileData && playerProfileData.length > 0) {
-      const playerProfile = playerProfileData[0]
-      if (!playerProfile.is_initial_setup_done) {
-        redirect('/initial_setup')
-      }
-    }
-  }
-  validateInitialSetup();
-
   useEffect(() => {
+
     //setNutritionSheetDay(dayjs().toDate());
 
     const fetchUserEmail = async () => {
@@ -101,12 +86,33 @@ export default function Home() {
   }, [rootUserId]);
 
   console.log(bodyComposition);
+
+  const handleRootUserChange = (newValue: string) => {
+    setRootUserId(newValue);
+    const selectedUser = players.find((player) => player.id === newValue);
+    if (!selectedUser?.training_load) {
+      const training_load = Number(prompt("トレーニング負荷数値を入力してください"));
+      const non_training_load = Number(prompt("非トレーニング負荷数値を入力してください"));
+      setTrainingLoad(newValue, training_load, non_training_load);
+      setPlayers(players.map((player) => {
+        if (player.id === newValue) {
+          return { ...player, training_load: training_load, non_training_load: non_training_load };
+        }
+        return player;
+      }
+      ));
+    }
+    //setNutritionSheetDay(dayjs().toDate());
+  };
   
   return (
     <div className="">
       <main className="">
         <AdminHeader userEmail = {userEmail}/>
-        <div className="">
+        <div className="flex flex-row">
+          <div className='w-[20vw]'>
+            <UserList playerList={players} rootUserIdChange={handleRootUserChange} />
+          </div>
           {rootUserId ? <NutritionCard nutrition={nutrition} rootUserId={rootUserId} currentDate={currentDate} bodyComposition={bodyComposition} /> : <div>選手を選択してください</div>}
         </div>
       </main>

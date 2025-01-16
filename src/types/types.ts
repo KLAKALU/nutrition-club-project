@@ -2,11 +2,14 @@ export interface NutritionGraphProps {
     graphprops: Nutrition[];
 }
 
-export interface User {
+export interface PlayerProfile {
     id: string;
-    name: string;
+    first_name: string;
+    last_name: string;
     age: number;
     club: string;
+    non_training_load?: number;
+    training_load?: number;
 }
 
 export interface BodyComposition {

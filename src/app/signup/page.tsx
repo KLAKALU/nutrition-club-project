@@ -1,12 +1,11 @@
 'use client'
 
-import { login } from './actions';
+import { signup } from './actions';
 import { Card, CardBody, CardHeader } from "@nextui-org/card";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { FaEnvelope } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa6";
-import Link from "next/link";
 // import { useFormStatus } from 'react-dom';
 
 function SubmitButton() {
@@ -20,20 +19,20 @@ function SubmitButton() {
       //isLoading={pending}
       fullWidth
     >
-      ログイン
+      登録
     </Button>
   );
 }
 
-export default function LoginPage() {
+export default function signupPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <Card className="w-full max-w-md p-6">
         <CardHeader>
-          <h1 className="text-2xl font-bold text-center">ログイン</h1>
+          <h1 className="text-2xl font-bold text-center">登録</h1>
         </CardHeader>
         <CardBody>
-          <form className="space-y-4" action={login}>
+          <form className="space-y-4" action={signup}>
             <div className="">
                 <Input
                   id="email"
@@ -48,6 +47,7 @@ export default function LoginPage() {
                   className='pb-4'
                 />
             </div>
+
             <div className="">
                 <Input
                   id="password"
@@ -63,12 +63,6 @@ export default function LoginPage() {
             </div>
             <SubmitButton />
           </form>
-          <div className="mt-4 text-center text-sm">
-            <span className="text-gray-600">アカウントをお持ちでない方は</span>{' '}
-            <Link href="/signup" className="text-blue-600 hover:text-blue-800 font-medium">
-              新規登録
-            </Link>
-          </div>
         </CardBody>
       </Card>
     </div>

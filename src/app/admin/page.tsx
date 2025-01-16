@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 
+import UserList from '@/utils/userlist/userlist';
+
 import dayjs from 'dayjs';
 import { createClient } from '@/utils/supabase/client';
 import { redirect } from 'next/navigation';
@@ -26,27 +28,8 @@ export default function Home() {
 
   const currentDate = dayjs().toDate();
 
-  const validateInitialSetup = async () => {
-    const supabase = await createClient();
-    const {data:{ user }} = await supabase.auth.getUser();
-    if (!user) {
-      redirect('/login');
-    }
-    const { data: playerProfileData, error: playerProfileError } = await supabase.from('player_profiles').select().eq('id', user.id);
-
-    if (playerProfileError) {
-      redirect('/error')
-    }
-    if (playerProfileData && playerProfileData.length > 0) {
-      const playerProfile = playerProfileData[0]
-      if (!playerProfile.is_initial_setup_done) {
-        redirect('/initial_setup')
-      }
-    }
-  }
-  validateInitialSetup();
-
   useEffect(() => {
+
     //setNutritionSheetDay(dayjs().toDate());
 
     const fetchUserEmail = async () => {
@@ -101,12 +84,20 @@ export default function Home() {
   }, [rootUserId]);
 
   console.log(bodyComposition);
+
+  const handleRootUserChange = (newValue: string) => {
+    setRootUserId(newValue);
+    //setNutritionSheetDay(dayjs().toDate());
+  };
   
   return (
     <div className="">
       <main className="">
         <AdminHeader userEmail = {userEmail}/>
-        <div className="">
+        <div className="flex flex-row">
+          <div className='w-[20vw]'>
+            <UserList playerList={players} rootUserIdChange={handleRootUserChange} />
+          </div>
           {rootUserId ? <NutritionCard nutrition={nutrition} rootUserId={rootUserId} currentDate={currentDate} bodyComposition={bodyComposition} /> : <div>選手を選択してください</div>}
         </div>
       </main>

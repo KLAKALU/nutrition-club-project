@@ -21,6 +21,7 @@ export async function getPlayerList() {
     const { data, error } = await supabase
         .from('player_profiles')
         .select()
+        .eq('is_initial_setup_done', true)
     if (error) {
         redirect('/error')
     }

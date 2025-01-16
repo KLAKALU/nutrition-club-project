@@ -66,3 +66,4 @@ export async function getPlayerNutrition(playerId: string, yearMonth: Date): Pro
     }))
     return NutritionData
 }
+

@@ -6,6 +6,7 @@ import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { FaEnvelope } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa6";
+import Link from "next/link";
 // import { useFormStatus } from 'react-dom';
 
 function SubmitButton() {
@@ -47,7 +48,6 @@ export default function LoginPage() {
                   className='pb-4'
                 />
             </div>
-
             <div className="">
                 <Input
                   id="password"
@@ -63,6 +63,12 @@ export default function LoginPage() {
             </div>
             <SubmitButton />
           </form>
+          <div className="mt-4 text-center text-sm">
+            <span className="text-gray-600">アカウントをお持ちでない方は</span>{' '}
+            <Link href="/signup" className="text-blue-600 hover:text-blue-800 font-medium">
+              新規登録
+            </Link>
+          </div>
         </CardBody>
       </Card>
     </div>

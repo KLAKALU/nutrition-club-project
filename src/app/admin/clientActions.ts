@@ -103,7 +103,7 @@ export function uploadNutrition(userId: string, playerBodyComposition: BodyCompo
 export function setTrainingLoad(userID: string, trainingLoad: number, non_training_load: number) {
     const supabase = createClient();
     const updateTrainingLoad = async () => {
-        const { data, error } = await supabase
+        const { error } = await supabase
             .from('player_profiles')
             .update({ training_load: trainingLoad, non_training_load: non_training_load })
             .eq('id', userID);

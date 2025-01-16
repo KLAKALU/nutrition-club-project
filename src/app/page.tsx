@@ -6,17 +6,15 @@ import dayjs from 'dayjs';
 import { createClient } from '@/utils/supabase/client';
 import { redirect } from 'next/navigation';
 
-import { PlayerProfile, BodyComposition, Nutrition } from '@/types/types';
-import { getPlayerList, getPlayerBodyComposition, getPlayerNutrition } from '@/app/admin/serverActions';
+import { BodyComposition, Nutrition } from '@/types/types';
+import { getPlayerBodyComposition, getPlayerNutrition } from '@/app/admin/serverActions';
 
-import  AdminHeader  from '@/utils/header/header';
+import AdminHeader  from '@/utils/header/header';
 import NutritionCard from '@/components/nutritionCard';
 
 export default function Home() {
 
-  const [rootUserId, setRootUserId] = useState<string>();
-
-  const [players, setPlayers] = useState<PlayerProfile[]>([]);
+  const [userId, setUserId] = useState<string>();
 
   const [bodyComposition, setBodyComposition] = useState<BodyComposition[]>([]);
 
@@ -49,38 +47,29 @@ export default function Home() {
   useEffect(() => {
     //setNutritionSheetDay(dayjs().toDate());
 
-    const fetchUserEmail = async () => {
+    const fetchUserData = async () => {
       const supabase = await createClient();
       const {data:{ user }} = await supabase.auth.getUser();
       if (!user || !user.email) {
         redirect('/login');
       }
+      setUserId(user.id);
       setUserEmail(user.email);
     }
-    fetchUserEmail();
+    fetchUserData();
 
     console.log("useEffect1Called")
-    const fetchPlayerList = async () => {
-      try {
-        const players = await getPlayerList();
-        setPlayers(players);
-      } catch (error) {
-        alert("選手データの取得に失敗しました");
-      }
-    };
-    fetchPlayerList();
   }, []);
-  console.log(players);
 
   useEffect(() => {
-    if (!rootUserId) {
+    if (!userId) {
       return;
     }
     console.log("useEffect2Called")
     const fetchBodyComposition = async () => {
       console.log("fetchBodyComposition")
       try {
-        const bodyComposition = await getPlayerBodyComposition(rootUserId, currentDate);
+        const bodyComposition = await getPlayerBodyComposition(userId, currentDate);
         setBodyComposition(bodyComposition);
       } catch (error) {
         alert("体組成データの取得に失敗しました");
@@ -91,14 +80,14 @@ export default function Home() {
     const fetchNutrition = async () => {
       try {
         console.log("fetchNutrition")
-        const nutrition: Nutrition[] = await getPlayerNutrition(rootUserId, currentDate);
+        const nutrition: Nutrition[] = await getPlayerNutrition(userId, currentDate);
         setNutrition(nutrition);
       } catch (error) {
         alert("栄養データの取得に失敗しました");
       }
     }
     fetchNutrition();
-  }, [rootUserId]);
+  }, [userId]);
 
   console.log(bodyComposition);
   
@@ -107,7 +96,7 @@ export default function Home() {
       <main className="">
         <AdminHeader userEmail = {userEmail}/>
         <div className="">
-          {rootUserId ? <NutritionCard nutrition={nutrition} rootUserId={rootUserId} currentDate={currentDate} bodyComposition={bodyComposition} /> : <div>選手を選択してください</div>}
+          {userId ? <NutritionCard nutrition={nutrition} rootUserId={userId} currentDate={currentDate} bodyComposition={bodyComposition} /> : <div>選手を選択してください</div>}
         </div>
       </main>
     </div>

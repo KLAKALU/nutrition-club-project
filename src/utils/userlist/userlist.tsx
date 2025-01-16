@@ -32,10 +32,12 @@ export default function UserList({ rootUserIdChange, playerList }: ChildProps) {
         return (
             <Card>
                 <CardHeader>
-                    <div>{user.last_name + "　" + user.first_name}</div>
+                    <div className="text-3xl font-bold">{user.last_name + "　" + user.first_name}</div>
                 </CardHeader>
                 <CardBody>
                     <div>{user.club}</div>
+                    <div className="text-small">運動負荷数値:{user.training_load}</div>
+                    <div className="text-small">非運動負荷数値:{user.non_training_load}</div>
                 </CardBody>
             </Card>
         )

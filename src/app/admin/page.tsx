@@ -10,9 +10,11 @@ import { redirect } from 'next/navigation';
 
 import { PlayerProfile, BodyComposition, Nutrition } from '@/types/types';
 import { getPlayerList, getPlayerBodyComposition, getPlayerNutrition } from '@/app/admin/serverActions';
+import { setTrainingLoad } from '@/app/admin/clientActions';
 
 import  AdminHeader  from '@/utils/header/header';
 import NutritionCard from '@/components/nutritionCard';
+
 
 export default function Home() {
 
@@ -87,6 +89,19 @@ export default function Home() {
 
   const handleRootUserChange = (newValue: string) => {
     setRootUserId(newValue);
+    const selectedUser = players.find((player) => player.id === newValue);
+    if (!selectedUser?.training_load) {
+      const training_load = Number(prompt("トレーニング負荷数値を入力してください"));
+      const non_training_load = Number(prompt("非トレーニング負荷数値を入力してください"));
+      setTrainingLoad(newValue, training_load, non_training_load);
+      setPlayers(players.map((player) => {
+        if (player.id === newValue) {
+          return { ...player, training_load: training_load, non_training_load: non_training_load };
+        }
+        return player;
+      }
+      ));
+    }
     //setNutritionSheetDay(dayjs().toDate());
   };
   

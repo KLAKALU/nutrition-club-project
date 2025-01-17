@@ -1,24 +1,26 @@
 'use client'
 
-import { useEffect, useState } from 'react';
-
-import UserList from '@/utils/userlist/userlist';
-
 import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { redirect } from 'next/navigation';
+import { User } from '@supabase/supabase-js';
 
 import { PlayerProfile, BodyComposition, Nutrition } from '@/types/types';
 import { getPlayerList, getPlayerBodyComposition, getPlayerNutrition } from '@/app/admin/serverActions';
 import { setTrainingLoad } from '@/app/admin/clientActions';
 
-import  AdminHeader  from '@/utils/header/header';
+
+import Header  from '@/utils/header/header';
 import NutritionCard from '@/components/nutritionCard';
+import UserList from '@/utils/userlist/userlist';
 
 
 export default function Home() {
 
-  const [rootUserId, setRootUserId] = useState<string>();
+  const [userData, setUserData] = useState<User>();
+
+  const [selectPlayer, setSelectPlayer] = useState<PlayerProfile>();
 
   const [players, setPlayers] = useState<PlayerProfile[]>([]);
 
@@ -26,25 +28,19 @@ export default function Home() {
 
   const [nutrition, setNutrition] = useState<Nutrition[]>([]);
 
-  const [userEmail, setUserEmail] = useState<string>("");
-
   const currentDate = dayjs().toDate();
 
   useEffect(() => {
-
-    //setNutritionSheetDay(dayjs().toDate());
-
-    const fetchUserEmail = async () => {
+    const fetchUserData = async () => {
       const supabase = await createClient();
-      const {data:{ user }} = await supabase.auth.getUser();
-      if (!user || !user.email) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
         redirect('/login');
       }
-      setUserEmail(user.email);
+      setUserData(user);
     }
-    fetchUserEmail();
+    fetchUserData();
 
-    console.log("useEffect1Called")
     const fetchPlayerList = async () => {
       try {
         const players = await getPlayerList();
@@ -58,14 +54,14 @@ export default function Home() {
   console.log(players);
 
   useEffect(() => {
-    if (!rootUserId) {
+    if (!selectPlayer) {
       return;
     }
     console.log("useEffect2Called")
     const fetchBodyComposition = async () => {
       console.log("fetchBodyComposition")
       try {
-        const bodyComposition = await getPlayerBodyComposition(rootUserId, currentDate);
+        const bodyComposition = await getPlayerBodyComposition(selectPlayer.id, currentDate);
         setBodyComposition(bodyComposition);
       } catch (error) {
         alert("体組成データの取得に失敗しました");
@@ -76,44 +72,43 @@ export default function Home() {
     const fetchNutrition = async () => {
       try {
         console.log("fetchNutrition")
-        const nutrition: Nutrition[] = await getPlayerNutrition(rootUserId, currentDate);
+        const nutrition: Nutrition[] = await getPlayerNutrition(selectPlayer.id, currentDate);
         setNutrition(nutrition);
       } catch (error) {
         alert("栄養データの取得に失敗しました");
       }
     }
     fetchNutrition();
-  }, [rootUserId,currentDate]);
+  }, [selectPlayer,currentDate]);
 
   console.log(bodyComposition);
 
-  const handleRootUserChange = (newValue: string) => {
-    setRootUserId(newValue);
-    const selectedUser = players.find((player) => player.id === newValue);
+  const handleSelectPlayerChange = (newPlayer: PlayerProfile) => {
+    setSelectPlayer(newPlayer);
+    const selectedUser = players.find((player) => player.id === newPlayer.id);
     if (!selectedUser?.training_load) {
       const training_load = Number(prompt("トレーニング負荷数値を入力してください"));
       const non_training_load = Number(prompt("非トレーニング負荷数値を入力してください"));
-      setTrainingLoad(newValue, training_load, non_training_load);
+      setTrainingLoad(newPlayer.id, training_load, non_training_load);
       setPlayers(players.map((player) => {
-        if (player.id === newValue) {
+        if (player.id === newPlayer.id) {
           return { ...player, training_load: training_load, non_training_load: non_training_load };
         }
         return player;
       }
       ));
     }
-    //setNutritionSheetDay(dayjs().toDate());
   };
   
   return (
     <div className="">
       <main className="">
-        <AdminHeader userEmail = {userEmail}/>
+        <Header userEmail = {userData?.email}/>
         <div className="flex flex-row">
           <div className='w-[20vw]'>
-            <UserList playerList={players} rootUserIdChange={handleRootUserChange} />
+            <UserList playerList={players} selectPlayerChange={handleSelectPlayerChange} />
           </div>
-          {rootUserId ? <NutritionCard nutrition={nutrition} rootUserId={rootUserId} currentDate={currentDate} bodyComposition={bodyComposition} /> : <div>選手を選択してください</div>}
+          {selectPlayer ? <NutritionCard nutrition={nutrition} rootUserId={selectPlayer.id} currentDate={currentDate} bodyComposition={bodyComposition} /> : <div>選手を選択してください</div>}
         </div>
       </main>
     </div>

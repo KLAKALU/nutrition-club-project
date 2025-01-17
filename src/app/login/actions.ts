@@ -23,11 +23,11 @@ export async function login(formData: FormData) {
 
   const { data, error: userError } = await supabase.auth.getUser()
 
-  if (userError) {
+  if (userError || !data) {
     redirect('/error')
   }
 
-  if (data?.user?.user_metadata?.is_admin) {
+  if (data.user.user_metadata?.is_admin) {
     revalidatePath('/admin', 'layout')
     redirect('/admin')
   }

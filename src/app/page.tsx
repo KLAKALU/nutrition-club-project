@@ -1,32 +1,31 @@
 'use client'
 
-import { useEffect, useState } from 'react';
-
 import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { redirect } from 'next/navigation';
+import { User } from '@supabase/supabase-js';
 
 import { BodyComposition, Nutrition } from '@/types/types';
 import { getPlayerBodyComposition, getPlayerNutrition } from '@/app/admin/serverActions';
 
-import AdminHeader  from '@/utils/header/header';
+import Header from '@/utils/header/header';
 import NutritionCard from '@/components/nutritionCard';
+
 
 export default function Home() {
 
-  const [userId, setUserId] = useState<string>();
+  const [userData, setUserData] = useState<User>();
 
   const [bodyComposition, setBodyComposition] = useState<BodyComposition[]>([]);
 
   const [nutrition, setNutrition] = useState<Nutrition[]>([]);
 
-  const [userEmail, setUserEmail] = useState<string>("");
-
   const currentDate = dayjs().toDate();
 
-  const validateInitialSetup = async () => {
+  const validateInitialSetupIsDone = async () => {
     const supabase = await createClient();
-    const {data:{ user }} = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       redirect('/login');
     }
@@ -42,34 +41,28 @@ export default function Home() {
       }
     }
   }
-  validateInitialSetup();
+  validateInitialSetupIsDone();
 
   useEffect(() => {
-    //setNutritionSheetDay(dayjs().toDate());
-
     const fetchUserData = async () => {
       const supabase = await createClient();
-      const {data:{ user }} = await supabase.auth.getUser();
-      if (!user || !user.email) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
         redirect('/login');
       }
-      setUserId(user.id);
-      setUserEmail(user.email);
+      setUserData(user);
     }
     fetchUserData();
-
-    console.log("useEffect1Called")
   }, []);
 
   useEffect(() => {
-    if (!userId) {
+    if (!userData) {
       return;
     }
-    console.log("useEffect2Called")
     const fetchBodyComposition = async () => {
       console.log("fetchBodyComposition")
       try {
-        const bodyComposition = await getPlayerBodyComposition(userId, currentDate);
+        const bodyComposition = await getPlayerBodyComposition(userData.id, currentDate);
         setBodyComposition(bodyComposition);
       } catch (error) {
         alert("体組成データの取得に失敗しました");
@@ -80,23 +73,23 @@ export default function Home() {
     const fetchNutrition = async () => {
       try {
         console.log("fetchNutrition")
-        const nutrition: Nutrition[] = await getPlayerNutrition(userId, currentDate);
+        const nutrition: Nutrition[] = await getPlayerNutrition(userData.id, currentDate);
         setNutrition(nutrition);
       } catch (error) {
         alert("栄養データの取得に失敗しました");
       }
     }
     fetchNutrition();
-  }, [userId]);
+  }, [userData, currentDate]);
 
   console.log(bodyComposition);
-  
+
   return (
     <div className="">
       <main className="">
-        <AdminHeader userEmail = {userEmail}/>
+        <Header userEmail={userData?.email} />
         <div className="">
-          {userId ? <NutritionCard nutrition={nutrition} rootUserId={userId} currentDate={currentDate} bodyComposition={bodyComposition} /> : <div>選手を選択してください</div>}
+          {userData ? <NutritionCard nutrition={nutrition} rootUserId={userData.id} currentDate={currentDate} bodyComposition={bodyComposition} /> : <div>選手情報の取得に失敗しました</div>}
         </div>
       </main>
     </div>

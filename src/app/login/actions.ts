@@ -28,6 +28,7 @@ export async function login(formData: FormData) {
   }
 
   if (data?.user?.user_metadata?.is_admin) {
+    revalidatePath('/admin', 'layout')
     redirect('/admin')
   }
 

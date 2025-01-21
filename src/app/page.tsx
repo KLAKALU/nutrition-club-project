@@ -1,7 +1,7 @@
 'use client'
 
 import dayjs from 'dayjs';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { redirect } from 'next/navigation';
 import { User } from '@supabase/supabase-js';

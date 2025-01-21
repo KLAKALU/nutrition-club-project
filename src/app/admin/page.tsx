@@ -28,9 +28,11 @@ export default function Home() {
 
   const [nutrition, setNutrition] = useState<Nutrition[]>([]);
 
-  const currentDate = dayjs().toDate();
+  //const currentDate = dayjs().toDate();
+  const [currentDate, setCurrentDate] = useState<Date>(dayjs().toDate());
 
   useEffect(() => {
+    setCurrentDate(dayjs().toDate())
     const fetchUserData = async () => {
       const supabase = await createClient();
       const { data: { user } } = await supabase.auth.getUser();
@@ -54,7 +56,7 @@ export default function Home() {
   console.log(players);
 
   useEffect(() => {
-    if (!selectPlayer) {
+    if (!selectPlayer || !currentDate) {
       return;
     }
     console.log("useEffect2Called")

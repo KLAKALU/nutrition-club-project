@@ -31,6 +31,7 @@ export default function Home() {
   const [currentDate, setCurrentDate] = useState<Date>(dayjs().toDate());
 
   useEffect(() => {
+    console.log("useEffect1Called")
     setCurrentDate(dayjs().toDate())
     const fetchUserData = async () => {
       const supabase = await createClient();

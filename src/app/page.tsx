@@ -25,41 +25,51 @@ export default function Home() {
 
   const [currentDate, setCurrentDate] = useState<Date>(dayjs().toDate());
 
-  const validateInitialSetupIsDone = async () => {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      redirect('/login');
-    }
-    setUserData(user);
-    const { data: playerProfileData, error: playerProfileError } = await supabase.from('player_profiles').select().eq('id', user.id);
-
-    if (playerProfileError || !playerProfileData) {
-      redirect('/error')
-    }
-      const playerProfile = playerProfileData[0]
-      if (!playerProfile.is_initial_setup_done) {
-        redirect('/initial_setup')
-      }
-    setPlayerProfile(playerProfileData[0]);
-  }
-  validateInitialSetupIsDone();
-
   useEffect(() => {
     setCurrentDate(dayjs().toDate());
-    const fetchUserData = async () => {
-      const supabase = await createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        redirect('/login');
+    
+    const checkAuthAndSetupUser = async () => {
+      try {
+        // Supabaseクライアントの初期化
+        const supabase = await createClient();
+        
+        // ユーザー認証状態の確認
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        
+        if (authError || !user) {
+          console.error('認証エラー:', authError);
+          return redirect('/login');
+        }
+        
+        setUserData(user);
+        
+        const { data: playerProfileData, error: profileError } = await supabase
+          .from('player_profiles')
+          .select()
+          .eq('id', user.id)
+          .single();
+        
+        if (profileError) {
+          console.error('プロフィール取得エラー:', profileError);
+          return;
+        }
+        
+        if (!playerProfileData) {
+          console.warn('プロフィールが見つかりません');
+          return;
+        }
+        
+        setPlayerProfile(playerProfileData);
+
+        if (!playerProfileData.is_initial_setup_done) {
+          redirect('/initial_setup');
+        }
+      } catch (error) {
+        console.error('予期せぬエラーが発生しました:', error);
       }
-      const { data: playerProfileData, error: playerProfileError } = await supabase.from('player_profiles').select().eq('id', user.id);
-      if (playerProfileError || !playerProfileData) {
-        return;
-      }
-      setUserData(playerProfileData[0]);
-    }
-    fetchUserData();
+    };
+  
+    checkAuthAndSetupUser();
   }, []);
 
   useEffect(() => {

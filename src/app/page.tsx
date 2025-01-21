@@ -1,12 +1,12 @@
 'use client'
 
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { redirect } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
 
-import { BodyComposition, Nutrition } from '@/types/types';
+import { BodyComposition, Nutrition, PlayerProfile } from '@/types/types';
 import { getPlayerBodyComposition, getPlayerNutrition } from '@/app/admin/serverActions';
 
 import Header from '@/utils/header/header';
@@ -16,6 +16,8 @@ import NutritionCard from '@/components/nutritionCard';
 export default function Home() {
 
   const [userData, setUserData] = useState<User>();
+
+  const [playerProfile, setPlayerProfile] = useState<PlayerProfile>();
 
   const [bodyComposition, setBodyComposition] = useState<BodyComposition[]>([]);
 
@@ -29,17 +31,17 @@ export default function Home() {
     if (!user) {
       redirect('/login');
     }
+    setUserData(user);
     const { data: playerProfileData, error: playerProfileError } = await supabase.from('player_profiles').select().eq('id', user.id);
 
-    if (playerProfileError) {
+    if (playerProfileError || !playerProfileData) {
       redirect('/error')
     }
-    if (playerProfileData && playerProfileData.length > 0) {
       const playerProfile = playerProfileData[0]
       if (!playerProfile.is_initial_setup_done) {
         redirect('/initial_setup')
       }
-    }
+    setPlayerProfile(playerProfileData[0]);
   }
   validateInitialSetupIsDone();
 
@@ -50,7 +52,11 @@ export default function Home() {
       if (!user) {
         redirect('/login');
       }
-      setUserData(user);
+      const { data: playerProfileData, error: playerProfileError } = await supabase.from('player_profiles').select().eq('id', user.id);
+      if (playerProfileError || !playerProfileData) {
+        return;
+      }
+      setUserData(playerProfileData[0]);
     }
     fetchUserData();
   }, []);
@@ -89,7 +95,7 @@ export default function Home() {
       <main className="">
         <Header userEmail={userData?.email} />
         <div className="">
-          {userData ? <NutritionCard nutrition={nutrition} rootUserId={userData.id} currentDate={currentDate} bodyComposition={bodyComposition} /> : <div>選手情報の取得に失敗しました</div>}
+          {playerProfile ? <NutritionCard nutrition={nutrition} selectPlayer={playerProfile} currentDate={currentDate} bodyComposition={bodyComposition} /> : <div>選手情報の取得に失敗しました</div>}
         </div>
       </main>
     </div>

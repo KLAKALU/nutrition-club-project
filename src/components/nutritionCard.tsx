@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import dayjs from 'dayjs';
 import { Input } from "@nextui-org/input";
-import { Card, CardHeader, Divider, Button } from "@nextui-org/react"
+import { Card, CardHeader, Divider, Button} from "@nextui-org/react"
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 
-import { BodyComposition, Nutrition } from '@/types/types';
+import { BodyComposition, Nutrition, PlayerProfile } from '@/types/types';
 
 import { uploadNutrition } from '@/app/admin/clientActions';
 import BodyCompositionGraph from '@/utils/graph/bodyCompositionGraph';
@@ -14,12 +14,12 @@ import NutritionGraph from '@/utils/graph/nutritionGraph';
 
 type NutritionCardProps = {
     nutrition: Nutrition[];
-    rootUserId: string;
+    selectPlayer: PlayerProfile;
     currentDate: Date;
     bodyComposition: BodyComposition[];
 }
 
-export default function NutritionCard({ nutrition, rootUserId, currentDate, bodyComposition }: NutritionCardProps) {
+export default function NutritionCard({ nutrition, selectPlayer, currentDate, bodyComposition }: NutritionCardProps) {
 
     const trainingDayNutrition = nutrition.filter((n) => n.is_training_day);
     const nonTrainingDayNutrition = nutrition.filter((n) => !n.is_training_day);
@@ -39,8 +39,8 @@ export default function NutritionCard({ nutrition, rootUserId, currentDate, body
     }
 
     const handleFileChange = (is_training_day: boolean) => (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (rootUserId) {
-            uploadNutrition(rootUserId, bodyComposition.slice(-1)[0], is_training_day, event);
+        if (selectPlayer) {
+            uploadNutrition(selectPlayer.id, bodyComposition.slice(-1)[0], is_training_day, event);
         }
     };
 
@@ -72,10 +72,10 @@ export default function NutritionCard({ nutrition, rootUserId, currentDate, body
                 </div>
                 <div className='flex flex-row'>
                     <div className='w-[35vw]'>
-                        {rootUserId ? <Input type="file" onChange={handleFileChange(true)}></Input> : null}
+                        {selectPlayer ? <Input type="file" onChange={handleFileChange(true)}></Input> : null}
                     </div>
                     <div className='w-[35vw]'>
-                        {rootUserId ? <Input type="file" onChange={handleFileChange(false)}></Input> : null}
+                        {selectPlayer ? <Input type="file" onChange={handleFileChange(false)}></Input> : null}
                     </div>
                 </div>
                 <div className=''>体組成</div>

@@ -20,7 +20,7 @@ export default function Home() {
 
   const [userData, setUserData] = useState<User>();
 
-  const [selectPlayer, setSelectPlayer] = useState<PlayerProfile>();
+  const [selectPlayer, setSelectPlayer] = useState<PlayerProfile | null>(null);
 
   const [players, setPlayers] = useState<PlayerProfile[]>([]);
 
@@ -110,7 +110,7 @@ export default function Home() {
           <div className='w-[20vw]'>
             <UserList playerList={players} selectPlayerChange={handleSelectPlayerChange} />
           </div>
-          {selectPlayer ? <NutritionCard nutrition={nutrition} rootUserId={selectPlayer.id} currentDate={currentDate} bodyComposition={bodyComposition} /> : <div>選手を選択してください</div>}
+          {selectPlayer ? <NutritionCard nutrition={nutrition} selectPlayer={selectPlayer} currentDate={currentDate} bodyComposition={bodyComposition} /> : <div>選手を選択してください</div>}
         </div>
       </main>
     </div>

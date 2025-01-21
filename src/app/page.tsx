@@ -23,7 +23,7 @@ export default function Home() {
 
   const [nutrition, setNutrition] = useState<Nutrition[]>([]);
 
-  const currentDate = dayjs().toDate();
+  const [currentDate, setCurrentDate] = useState<Date>(dayjs().toDate());
 
   const validateInitialSetupIsDone = async () => {
     const supabase = await createClient();
@@ -46,6 +46,7 @@ export default function Home() {
   validateInitialSetupIsDone();
 
   useEffect(() => {
+    setCurrentDate(dayjs().toDate());
     const fetchUserData = async () => {
       const supabase = await createClient();
       const { data: { user } } = await supabase.auth.getUser();

@@ -28,7 +28,6 @@ export default function Home() {
 
   const [nutrition, setNutrition] = useState<Nutrition[]>([]);
 
-  //const currentDate = dayjs().toDate();
   const [currentDate, setCurrentDate] = useState<Date>(dayjs().toDate());
 
   useEffect(() => {

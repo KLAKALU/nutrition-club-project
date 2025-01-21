@@ -31,7 +31,7 @@ function dataToObject(csv: string) {
     return nutrition;
 }
 
-function calculateNutrition(nutrition: Nutrition, playerBodyComposition: BodyComposition, is_training_day: boolean) {
+export function calculateNutrition(nutrition: Nutrition, playerBodyComposition: BodyComposition, is_training_day: boolean) {
     const nonFatBodyWeight = playerBodyComposition.weight * (1 - (playerBodyComposition.body_fat / 100));
     const totalEnergy = nonFatBodyWeight * 28.5 * (is_training_day ? 2.0 : 1.75);
     const totalProtein = nonFatBodyWeight * 2.2;
@@ -41,6 +41,7 @@ function calculateNutrition(nutrition: Nutrition, playerBodyComposition: BodyCom
     const toPercents = (value: number) => Math.round(value * 100);
 
     const nutritionData: Nutrition = {
+        ...nutrition,
         is_training_day: is_training_day,
         energy: toPercents(nutrition.energy / totalEnergy),
         protein: toPercents(nutrition.protein / totalProtein),
@@ -61,7 +62,7 @@ function calculateNutrition(nutrition: Nutrition, playerBodyComposition: BodyCom
 
 }
 
-export function uploadNutrition(userId: string, playerBodyComposition: BodyComposition, is_training_day: boolean, event: React.ChangeEvent<HTMLInputElement>) {
+export function uploadNutrition(userId: string, date: Date, is_training_day: boolean, event: React.ChangeEvent<HTMLInputElement>) {
     console.log("uploadNutrition");
     if (!event.target.files) {
         alert("ファイルが選択されていません");
@@ -76,25 +77,24 @@ export function uploadNutrition(userId: string, playerBodyComposition: BodyCompo
         console.log(csv);
         const nutrition = dataToObject(csv);
         console.log(nutrition);
-        const breakfastNutrition = calculateNutrition(nutrition[0], playerBodyComposition, is_training_day);
-        const lunchNutrition = calculateNutrition(nutrition[1], playerBodyComposition, is_training_day);
-        const dinnerNutrition = calculateNutrition(nutrition[2], playerBodyComposition, is_training_day);
-        console.log(breakfastNutrition);
-        console.log(lunchNutrition);
-        console.log(dinnerNutrition);
+        //const breakfastNutrition = calculateNutrition(nutrition[0], playerBodyComposition, is_training_day);
+        //const lunchNutrition = calculateNutrition(nutrition[1], playerBodyComposition, is_training_day);
+        //const dinnerNutrition = calculateNutrition(nutrition[2], playerBodyComposition, is_training_day);
+        //console.log(breakfastNutrition);
+        //console.log(lunchNutrition);
+        //console.log(dinnerNutrition);
         const supabase = await createClient();
-        const { data, error } = await supabase
+        const { error } = await supabase
             .from('player_nutrition')
             .insert([
-                { ...breakfastNutrition, meal_type_id: 1, player_id: userId, year: dayjs(playerBodyComposition.year_month).format("YYYY"), month: dayjs(playerBodyComposition.year_month).format("M") },
-                { ...lunchNutrition, meal_type_id: 2, player_id: userId, year: dayjs(playerBodyComposition.year_month).format("YYYY"), month: dayjs(playerBodyComposition.year_month).format("M") },
-                { ...dinnerNutrition, meal_type_id: 3, player_id: userId, year: dayjs(playerBodyComposition.year_month).format("YYYY"), month: dayjs(playerBodyComposition.year_month).format("M") }
+                { ...nutrition[0], meal_type_id: 1, is_training_day: is_training_day, player_id: userId, year: dayjs(date).format("YYYY"), month: dayjs(date).format("M") },
+                { ...nutrition[1], meal_type_id: 2, is_training_day: is_training_day, player_id: userId, year: dayjs(date).format("YYYY"), month: dayjs(date).format("M") },
+                { ...nutrition[2], meal_type_id: 3, is_training_day: is_training_day, player_id: userId, year: dayjs(date).format("YYYY"), month: dayjs(date).format("M") }
             ]);
-        if (data) {
-            console.log(data);
-        }
         if (error) {
             console.log(error);
+            alert("栄養データのアップロードに失敗しました");
+            return;
         }
     }
 

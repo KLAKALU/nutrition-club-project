@@ -8,7 +8,7 @@ import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 
 import { BodyComposition, Nutrition, PlayerProfile } from '@/types/types';
 
-import { uploadNutrition } from '@/app/admin/clientActions';
+import { uploadNutrition, calculateNutrition } from '@/app/admin/clientActions';
 import BodyCompositionGraph from '@/utils/graph/bodyCompositionGraph';
 import NutritionGraph from '@/utils/graph/nutritionGraph';
 
@@ -21,8 +21,18 @@ type NutritionCardProps = {
 
 export default function NutritionCard({ nutrition, selectPlayer, currentDate, bodyComposition }: NutritionCardProps) {
 
-    const trainingDayNutrition = nutrition.filter((n) => n.is_training_day);
-    const nonTrainingDayNutrition = nutrition.filter((n) => !n.is_training_day);
+    const trainingDayNutrition:Nutrition[] = nutrition.filter((n) => n.is_training_day);
+
+    const nonTrainingDayNutrition:Nutrition[] = nutrition.filter((n) => !n.is_training_day);
+
+    const trainingDayNutritionRatio = trainingDayNutrition.map((n) => calculateNutrition(n, bodyComposition[0], true));
+
+    const nonTrainingDayNutritionRatio = nonTrainingDayNutrition.map((n) => calculateNutrition(n, bodyComposition[0], false));
+
+    console.log(trainingDayNutrition);
+    console.log(nonTrainingDayNutrition);
+    console.log(trainingDayNutritionRatio);
+    console.log(nonTrainingDayNutritionRatio);
 
     const [SheetSelectedDay, setSheetSelectedDay] = useState<Date>(currentDate);
 
@@ -40,7 +50,7 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
 
     const handleFileChange = (is_training_day: boolean) => (event: React.ChangeEvent<HTMLInputElement>) => {
         if (selectPlayer) {
-            uploadNutrition(selectPlayer.id, bodyComposition.slice(-1)[0], is_training_day, event);
+            uploadNutrition(selectPlayer.id, currentDate, is_training_day, event);
         }
     };
 
@@ -64,10 +74,10 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                 <div className=''>必須栄養素</div>
                 <div className='flex flex-row h-[35vh]'>
                     <div className="w-[35vw]">
-                        {trainingDayNutrition.length ? <NutritionGraph graphprops={trainingDayNutrition} /> : <div>データがありません</div>}
+                        {trainingDayNutritionRatio ? <NutritionGraph graphprops={trainingDayNutritionRatio} /> : <div>データがありません</div>}
                     </div>
                     <div className='w-[35vw]'>
-                        {nonTrainingDayNutrition.length ? <NutritionGraph graphprops={nonTrainingDayNutrition} /> : <div>データがありません</div>}
+                        {nonTrainingDayNutrition.length ? <NutritionGraph graphprops={nonTrainingDayNutritionRatio} /> : <div>データがありません</div>}
                     </div>
                 </div>
                 <div className='flex flex-row'>

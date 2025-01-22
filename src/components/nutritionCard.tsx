@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import dayjs from 'dayjs';
 import { Input } from "@heroui/input";
-import { Card, CardHeader, Divider, Button, Textarea} from "@heroui/react"
+import { Card, CardHeader, Divider, Button, Textarea, Switch} from "@heroui/react"
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 
 import { BodyComposition, Nutrition, PlayerProfile, Comment } from '@/types/types';
@@ -31,6 +31,8 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
 
     const nonTrainingDayNutritionRatio = nonTrainingDayNutrition.map((n) => calculateNutrition(n, bodyComposition[0], false));
 
+    const [isGraphMode, setIsGraphMode] = useState(true);
+
     console.log(trainingDayNutrition);
     console.log(nonTrainingDayNutrition);
     console.log(trainingDayNutritionRatio);
@@ -56,9 +58,40 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
         }
     };
 
+    const renderNutritionData = (data: Nutrition | null) => {
+        if (!data) return <div>データがありません</div>;
+        
+        const nutrients = {
+            "タンパク質 (g)": data.protein ?? 0,
+            "脂質 (g)": data.fat ?? 0,
+            "炭水化物 (g)": data.carbohydrate ?? 0,
+            "カルシウム (mg)": data.calcium ?? 0,
+            "鉄分 (mg)": data.iron ?? 0,
+            "亜鉛 (mg)": data.zinc ?? 0,
+            "ビタミンA (μg)": data.vitaminA ?? 0,
+            "ビタミンD (μg)": data.vitaminD ?? 0,
+            "ビタミンE (mg)": data.vitaminE ?? 0,
+            "ビタミンK (μg)": data.vitaminK ?? 0,
+            "ビタミンB1 (mg)": data.vitaminB1 ?? 0,
+            "ビタミンB2 (mg)": data.vitaminB2 ?? 0,
+            "ビタミンC (mg)": data.vitaminC ?? 0
+        };
+
+        return (
+            <div className="grid grid-cols-2 gap-2 p-4">
+                {Object.entries(nutrients).map(([name, value]) => (
+                    <div key={name} className="flex justify-between border-b border-gray-200 py-1">
+                        <span>{name}</span>
+                        <span>{typeof value === 'number' ? value.toFixed(1) : '0.0'}</span>
+                    </div>
+                ))}
+            </div>
+        );
+    };
+
     return (
-        <div className=''>
-            <div>
+        <div className="space-y-4">
+            <div className="flex gap-2">
                 <Button onClick={decrementSheetDateMonth} isIconOnly aria-label="MonthDecrement" color="primary" variant="bordered">
                     <FaAngleLeft />
                 </Button>
@@ -66,36 +99,53 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                     <FaAngleRight />
                 </Button>
             </div>
-            <Card>
-                <CardHeader className=''>
+            <Card className="p-4">
+                <CardHeader className="flex items-baseline">
                     <span className="text-xl">{dayjs(SheetSelectedDay).format("YYYY")} /</span>
                     <span className="text-3xl font-bold">{dayjs(SheetSelectedDay).format("M")}</span>
-                    <span className='pl-1'>月の栄養管理シート</span>
+                    <span className="pl-1">月の栄養管理シート</span>
                 </CardHeader>
                 <Divider />
-                <div className=''>必須栄養素</div>
-                <div className='flex flex-row h-[35vh]'>
+                <div className="py-2">
+                    <div className="text-lg">必須栄養素</div>
+                    <Switch isSelected={isGraphMode} onValueChange={setIsGraphMode}>
+                        グラフモード
+                    </Switch>
+                </div>
+                <div className="flex flex-row h-[35vh] gap-4">
                     <div className="w-[35vw]">
-                        {trainingDayNutritionRatio ? <NutritionGraph graphprops={trainingDayNutritionRatio} /> : <div>データがありません</div>}
+                        {trainingDayNutrition.length ? (
+                            isGraphMode ? 
+                                <NutritionGraph graphprops={trainingDayNutritionRatio} /> :
+                                renderNutritionData(trainingDayNutrition[0])
+                        ) : (
+                            <div>データがありません</div>
+                        )}
                     </div>
-                    <div className='w-[35vw]'>
-                        {nonTrainingDayNutrition.length ? <NutritionGraph graphprops={nonTrainingDayNutritionRatio} /> : <div>データがありません</div>}
+                    <div className="w-[35vw]">
+                        {nonTrainingDayNutrition.length ? (
+                            isGraphMode ? 
+                                <NutritionGraph graphprops={nonTrainingDayNutritionRatio} /> :
+                                renderNutritionData(nonTrainingDayNutrition[0])
+                        ) : (
+                            <div>データがありません</div>
+                        )}
                     </div>
                 </div>
-                <div className='flex flex-row'>
-                    <div className='w-[35vw]'>
-                        {selectPlayer ? <Input type="file" onChange={handleFileChange(true)}></Input> : null}
+                <div className="flex flex-row gap-4">
+                    <div className="w-[35vw]">
+                        {selectPlayer && <Input type="file" onChange={handleFileChange(true)} />}
                     </div>
-                    <div className='w-[35vw]'>
-                        {selectPlayer ? <Input type="file" onChange={handleFileChange(false)}></Input> : null}
+                    <div className="w-[35vw]">
+                        {selectPlayer && <Input type="file" onChange={handleFileChange(false)} />}
                     </div>
                 </div>
-                <div className='flex flex-row'>
-                    <div className=''>体組成</div>
+                <div className="flex flex-row gap-4">
+                    <div className="text-lg">体組成</div>
                     <div className="w-[35vw]">
                         <BodyCompositionGraph bodyComposition={bodyComposition} />
                     </div>
-                    {comment ? (
+                    {comment && (
                         <div className="flex flex-col gap-2 w-full">
                             <Textarea
                                 isReadOnly
@@ -115,9 +165,9 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                                 編集
                             </Button>
                         </div>
-                    ) : null}
+                    )}
                 </div>
             </Card>
         </div>
-    )
+    );
 }

@@ -39,3 +39,9 @@ export interface Nutrition {
     vitaminB2: number;
     vitaminC: number;
 }
+
+export interface Comment {
+    comment: string;
+    date: Date;
+    player_id: string;
+}

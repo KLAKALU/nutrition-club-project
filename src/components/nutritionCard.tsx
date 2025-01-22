@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import dayjs from 'dayjs';
 import { Input } from "@nextui-org/input";
-import { Card, CardHeader, Divider, Button} from "@nextui-org/react"
+import { Card, CardHeader, Divider, Button, Textarea} from "@nextui-org/react"
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 
-import { BodyComposition, Nutrition, PlayerProfile } from '@/types/types';
+import { BodyComposition, Nutrition, PlayerProfile, Comment } from '@/types/types';
 
 import { uploadNutrition, calculateNutrition } from '@/app/admin/clientActions';
 import BodyCompositionGraph from '@/utils/graph/bodyCompositionGraph';
@@ -17,9 +17,10 @@ type NutritionCardProps = {
     selectPlayer: PlayerProfile;
     currentDate: Date;
     bodyComposition: BodyComposition[];
+    comment: Comment;
 }
 
-export default function NutritionCard({ nutrition, selectPlayer, currentDate, bodyComposition }: NutritionCardProps) {
+export default function NutritionCard({ nutrition, selectPlayer, currentDate, bodyComposition, comment }: NutritionCardProps) {
 
     const trainingDayNutrition:Nutrition[] = nutrition.filter((n) => n.is_training_day);
 
@@ -88,9 +89,20 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                         {selectPlayer ? <Input type="file" onChange={handleFileChange(false)}></Input> : null}
                     </div>
                 </div>
+                <div className='flex flex-row'>
                 <div className=''>体組成</div>
                 <div className="w-[35vw]">
                     <BodyCompositionGraph bodyComposition={bodyComposition} />
+                </div>
+                {comment ? <Textarea
+                    isReadOnly
+                    className="max-w-xs"
+                    defaultValue={comment.comment}
+                    label="コメント"
+                    labelPlacement="outside"
+                    placeholder="Enter your description"
+                    variant="bordered"
+                    /> : null}
                 </div>
             </Card>
         </div>

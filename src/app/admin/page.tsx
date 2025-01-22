@@ -6,8 +6,8 @@ import { createClient } from '@/utils/supabase/client';
 import { redirect } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
 
-import { PlayerProfile, BodyComposition, Nutrition } from '@/types/types';
-import { getPlayerList, getPlayerBodyComposition, getPlayerNutrition } from '@/app/admin/serverActions';
+import { PlayerProfile, BodyComposition, Nutrition, Comment } from '@/types/types';
+import { getPlayerList, getPlayerBodyComposition, getPlayerNutrition, getComment } from '@/app/admin/serverActions';
 import { setTrainingLoad } from '@/app/admin/clientActions';
 
 
@@ -25,6 +25,8 @@ export default function Home() {
   const [players, setPlayers] = useState<PlayerProfile[]>([]);
 
   const [bodyComposition, setBodyComposition] = useState<BodyComposition[]>([]);
+
+  const [comment, setComment] = useState<Comment[]>([]);
 
   const [nutrition, setNutrition] = useState<Nutrition[]>([]);
 
@@ -63,7 +65,7 @@ export default function Home() {
     const fetchBodyComposition = async () => {
       console.log("fetchBodyComposition")
       try {
-        const bodyComposition = await getPlayerBodyComposition(selectPlayer.id, currentDate);
+        const bodyComposition = await getPlayerBodyComposition(selectPlayer.id);
         setBodyComposition(bodyComposition);
       } catch (error) {
         alert("体組成データの取得に失敗しました");
@@ -74,16 +76,32 @@ export default function Home() {
     const fetchNutrition = async () => {
       try {
         console.log("fetchNutrition")
-        const nutrition: Nutrition[] = await getPlayerNutrition(selectPlayer.id, currentDate);
+        const nutrition: Nutrition[] = await getPlayerNutrition(selectPlayer.id);
         setNutrition(nutrition);
       } catch (error) {
         alert("栄養データの取得に失敗しました");
       }
     }
     fetchNutrition();
+
+    const fetchComment = async () => {
+      try {
+        console.log("fetchComment")
+        const comment = await getComment(selectPlayer.id);
+        setComment(comment);
+      } catch (error) {
+        alert("コメントの取得に失敗しました");
+      }
+    }
+    fetchComment();
+    
   }, [selectPlayer,currentDate]);
 
   console.log(bodyComposition);
+
+  console.log(nutrition);
+
+  console.log(comment);
 
   const handleSelectPlayerChange = (newPlayer: PlayerProfile) => {
     setSelectPlayer(newPlayer);
@@ -110,7 +128,7 @@ export default function Home() {
           <div className='w-[20vw]'>
             <UserList playerList={players} selectPlayerChange={handleSelectPlayerChange} />
           </div>
-          {selectPlayer ? <NutritionCard nutrition={nutrition} selectPlayer={selectPlayer} currentDate={currentDate} bodyComposition={bodyComposition} /> : <div>選手を選択してください</div>}
+          {selectPlayer ? <NutritionCard nutrition={nutrition} selectPlayer={selectPlayer} currentDate={currentDate} bodyComposition={bodyComposition} comment={comment[0]}/> : <div>選手を選択してください</div>}
         </div>
       </main>
     </div>

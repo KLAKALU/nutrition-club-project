@@ -27,7 +27,7 @@ export default function Home() {
 
   useEffect(() => {
     setCurrentDate(dayjs().toDate());
-    
+
     const checkAuthAndSetupUser = async () => {
       try {
         // Supabaseクライアントの初期化
@@ -79,7 +79,7 @@ export default function Home() {
     const fetchBodyComposition = async () => {
       console.log("fetchBodyComposition")
       try {
-        const bodyComposition = await getPlayerBodyComposition(userData.id, currentDate);
+        const bodyComposition = await getPlayerBodyComposition(userData.id);
         setBodyComposition(bodyComposition);
       } catch (error) {
         alert("体組成データの取得に失敗しました");
@@ -90,7 +90,7 @@ export default function Home() {
     const fetchNutrition = async () => {
       try {
         console.log("fetchNutrition")
-        const nutrition: Nutrition[] = await getPlayerNutrition(userData.id, currentDate);
+        const nutrition: Nutrition[] = await getPlayerNutrition(userData.id);
         setNutrition(nutrition);
       } catch (error) {
         alert("栄養データの取得に失敗しました");

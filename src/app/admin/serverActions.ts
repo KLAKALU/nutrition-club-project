@@ -1,10 +1,9 @@
 'use server'
 
-import { Nutrition } from '@/types/types'
+import { Nutrition, Comment } from '@/types/types'
 import { createClient } from '@/utils/supabase/server'
 
 import { redirect } from 'next/navigation'
-import dayjs from 'dayjs'
 
 export async function logout() {
     const supabase = await createClient()  
@@ -28,33 +27,26 @@ export async function getPlayerList() {
     return data
 }
 
-export async function getPlayerBodyComposition(playerId: string, date: Date) {
+export async function getPlayerBodyComposition(playerId: string) {
     const supabase = await createClient()
-
-    const startOfMonth = dayjs(date).subtract(1,"y").startOf('month').toISOString()
-    const endOfMonth = dayjs(date).endOf('month').toISOString()
 
     const { data, error } = await supabase
         .from('body_composition')
         .select('year_month, weight, muscle_mass, body_fat')
         .eq('player_id', playerId)
         .order('year_month')
-        .gte('year_month', startOfMonth)
-        .lt('year_month', endOfMonth)
     if (error) {
         redirect('/error')
     }
     return data
 }
 
-export async function getPlayerNutrition(playerId: string, yearMonth: Date): Promise<Nutrition[]> {
+export async function getPlayerNutrition(playerId: string): Promise<Nutrition[]> {
     const supabase = await createClient()
     const { data, error } = await supabase
         .from('player_nutrition')
         .select('is_training_day, meal_type (type), energy, protein, fat, carbohydrate, calcium, iron, zinc, vitaminA, vitaminD, vitaminE, vitaminK, vitaminB1, vitaminB2, vitaminC')
         .eq('player_id', playerId)
-        .eq('year', yearMonth.getFullYear())
-        .eq('month', yearMonth.getMonth() + 1)
     if (error) {
         redirect('/error')
     }
@@ -68,3 +60,17 @@ export async function getPlayerNutrition(playerId: string, yearMonth: Date): Pro
     return NutritionData
 }
 
+export async function getComment(playerId: string): Promise<Comment[]> {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+        .from('comment')
+        .select('comment, date, player_id')
+        .eq('player_id', playerId)
+    if (error) {
+        throw new Error('コメントの取得に失敗しました')
+    }
+    if (!data) {
+        return []
+    }
+    return data
+}

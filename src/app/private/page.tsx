@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 
 import { createClient } from '@/utils/supabase/server'
 
-import {Button} from '@nextui-org/button';
+import {Button} from "@heroui/button";
 
 import { logout } from './actions'
 

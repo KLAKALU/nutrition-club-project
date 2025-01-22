@@ -1,50 +1,62 @@
 'use client'
 
-import { useEffect, useState } from 'react';
-
-import UserList from '@/utils/userlist/userlist';
-
 import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { redirect } from 'next/navigation';
+import { User } from '@supabase/supabase-js';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerBody,
+  DrawerFooter,
+  Button,
+  useDisclosure,
+  Textarea
+} from "@heroui/react";
 
-import { PlayerProfile, BodyComposition, Nutrition } from '@/types/types';
-import { getPlayerList, getPlayerBodyComposition, getPlayerNutrition } from '@/app/admin/serverActions';
+import { PlayerProfile, BodyComposition, Nutrition, Comment } from '@/types/types';
+import { getPlayerList, getPlayerBodyComposition, getPlayerNutrition, getComment } from '@/app/admin/serverActions';
 import { setTrainingLoad } from '@/app/admin/clientActions';
 
-import  AdminHeader  from '@/utils/header/header';
+
+import Header  from '@/utils/header/header';
 import NutritionCard from '@/components/nutritionCard';
+import UserList from '@/utils/userlist/userlist';
 
 
 export default function Home() {
 
-  const [rootUserId, setRootUserId] = useState<string>();
+  const [userData, setUserData] = useState<User>();
+
+  const [selectPlayer, setSelectPlayer] = useState<PlayerProfile | null>(null);
 
   const [players, setPlayers] = useState<PlayerProfile[]>([]);
 
   const [bodyComposition, setBodyComposition] = useState<BodyComposition[]>([]);
 
+  const [comment, setComment] = useState<Comment[]>([]);
+
   const [nutrition, setNutrition] = useState<Nutrition[]>([]);
 
-  const [userEmail, setUserEmail] = useState<string>("");
+  const [currentDate, setCurrentDate] = useState<Date>(dayjs().toDate());
 
-  const currentDate = dayjs().toDate();
+  const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
   useEffect(() => {
-
-    //setNutritionSheetDay(dayjs().toDate());
-
-    const fetchUserEmail = async () => {
+    console.log("useEffect1Called")
+    setCurrentDate(dayjs().toDate())
+    const fetchUserData = async () => {
       const supabase = await createClient();
-      const {data:{ user }} = await supabase.auth.getUser();
-      if (!user || !user.email) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
         redirect('/login');
       }
-      setUserEmail(user.email);
+      setUserData(user);
     }
-    fetchUserEmail();
+    fetchUserData();
 
-    console.log("useEffect1Called")
     const fetchPlayerList = async () => {
       try {
         const players = await getPlayerList();
@@ -58,14 +70,14 @@ export default function Home() {
   console.log(players);
 
   useEffect(() => {
-    if (!rootUserId) {
+    if (!selectPlayer || !currentDate) {
       return;
     }
     console.log("useEffect2Called")
     const fetchBodyComposition = async () => {
       console.log("fetchBodyComposition")
       try {
-        const bodyComposition = await getPlayerBodyComposition(rootUserId, currentDate);
+        const bodyComposition = await getPlayerBodyComposition(selectPlayer.id);
         setBodyComposition(bodyComposition);
       } catch (error) {
         alert("体組成データの取得に失敗しました");
@@ -76,44 +88,87 @@ export default function Home() {
     const fetchNutrition = async () => {
       try {
         console.log("fetchNutrition")
-        const nutrition: Nutrition[] = await getPlayerNutrition(rootUserId, currentDate);
+        const nutrition: Nutrition[] = await getPlayerNutrition(selectPlayer.id);
         setNutrition(nutrition);
       } catch (error) {
         alert("栄養データの取得に失敗しました");
       }
     }
     fetchNutrition();
-  }, [rootUserId,currentDate]);
+
+    const fetchComment = async () => {
+      try {
+        console.log("fetchComment")
+        const comment = await getComment(selectPlayer.id);
+        setComment(comment);
+      } catch (error) {
+        alert("コメントの取得に失敗しました");
+      }
+    }
+    fetchComment();
+    
+  }, [selectPlayer,currentDate]);
 
   console.log(bodyComposition);
 
-  const handleRootUserChange = (newValue: string) => {
-    setRootUserId(newValue);
-    const selectedUser = players.find((player) => player.id === newValue);
+  console.log(nutrition);
+
+  console.log(comment);
+
+  const handleSelectPlayerChange = (newPlayer: PlayerProfile) => {
+    setSelectPlayer(newPlayer);
+    const selectedUser = players.find((player) => player.id === newPlayer.id);
     if (!selectedUser?.training_load) {
       const training_load = Number(prompt("トレーニング負荷数値を入力してください"));
       const non_training_load = Number(prompt("非トレーニング負荷数値を入力してください"));
-      setTrainingLoad(newValue, training_load, non_training_load);
+      setTrainingLoad(newPlayer.id, training_load, non_training_load);
       setPlayers(players.map((player) => {
-        if (player.id === newValue) {
+        if (player.id === newPlayer.id) {
           return { ...player, training_load: training_load, non_training_load: non_training_load };
         }
         return player;
       }
       ));
     }
-    //setNutritionSheetDay(dayjs().toDate());
   };
   
   return (
     <div className="">
       <main className="">
-        <AdminHeader userEmail = {userEmail}/>
+        <Header userEmail = {userData?.email}/>
         <div className="flex flex-row">
           <div className='w-[20vw]'>
-            <UserList playerList={players} rootUserIdChange={handleRootUserChange} />
+            <UserList playerList={players} selectPlayerChange={handleSelectPlayerChange} />
           </div>
-          {rootUserId ? <NutritionCard nutrition={nutrition} rootUserId={rootUserId} currentDate={currentDate} bodyComposition={bodyComposition} /> : <div>選手を選択してください</div>}
+          {selectPlayer ? <NutritionCard nutrition={nutrition} selectPlayer={selectPlayer} currentDate={currentDate} bodyComposition={bodyComposition} comment={comment[0]} onEditOpen = {onOpen}/> : <div>選手を選択してください</div>}
+        </div>
+        <div>
+        <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
+        <DrawerContent>
+          {(onClose) => (
+            <>
+              <DrawerHeader className="flex flex-col gap-1">コメント編集</DrawerHeader>
+              <DrawerBody>
+                <Textarea
+                                className="max-w-xs"
+                                defaultValue={comment[0].comment}
+                                labelPlacement="outside"
+                                placeholder="Enter your description"
+                                variant="bordered"
+                            />
+              </DrawerBody>
+              <DrawerFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  閉じる
+                </Button>
+                <Button color="primary" onPress={onClose}>
+                  変更
+                </Button>
+              </DrawerFooter>
+            </>
+          )}
+        </DrawerContent>
+      </Drawer>
         </div>
       </main>
     </div>

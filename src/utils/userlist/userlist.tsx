@@ -1,26 +1,30 @@
 "use client"
-import { Listbox, ListboxItem,} from "@nextui-org/react"
-import {Card, CardHeader, CardBody} from "@nextui-org/react"
+import { Listbox, ListboxItem } from "@heroui/react"
+import {Card, CardHeader, CardBody} from "@heroui/react"
 import { PlayerProfile } from "@/types/types"
 import { useState } from "react"
 
 interface ChildProps {
-    rootUserIdChange: (value: string) => void;
+    selectPlayerChange: (value: PlayerProfile) => void;
     playerList: PlayerProfile[];
 }
 
-export default function UserList({ rootUserIdChange, playerList }: ChildProps) {
+export default function UserList({ selectPlayerChange, playerList }: ChildProps) {
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
 
-    const handleUserChange = (newValue: string) => {
-        setSelectedUserId(newValue)
-        rootUserIdChange(newValue)
+    const handleUserChange = (selectPlayerId: string) => {
+        setSelectedUserId(selectPlayerId)
+        const selectUser = playerList.find((user) => user.id === selectPlayerId)
+        if (!selectUser) {
+            return
+        }
+        selectPlayerChange(selectUser)
     }
 
     const  TopContent = () => {
-        const user = playerList.find((user) => user.id === selectedUserId)
-        console.log(user ? user.last_name : "No user selected")
-        if (!user) {
+        const player = playerList.find((player) => player.id === selectedUserId)
+        console.log(player ? player.last_name : "No Player selected")
+        if (!player) {
             return (
                 <Card>
                     <CardHeader>
@@ -32,12 +36,12 @@ export default function UserList({ rootUserIdChange, playerList }: ChildProps) {
         return (
             <Card>
                 <CardHeader>
-                    <div className="text-3xl font-bold">{user.last_name + "　" + user.first_name}</div>
+                    <div className="text-3xl font-bold">{player.last_name + "　" + player.first_name}</div>
                 </CardHeader>
                 <CardBody>
-                    <div>{user.club}</div>
-                    <div className="text-small">運動負荷数値:{user.training_load}</div>
-                    <div className="text-small">非運動負荷数値:{user.non_training_load}</div>
+                    <div>{player.club}</div>
+                    <div className="text-small">運動負荷数値:{player.training_load}</div>
+                    <div className="text-small">非運動負荷数値:{player.non_training_load}</div>
                 </CardBody>
             </Card>
         )

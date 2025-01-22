@@ -1,8 +1,8 @@
 'use client'
 import {useState} from 'react';
-import { Navbar, NavbarContent,NavbarItem } from "@nextui-org/navbar";
-import { Button } from "@nextui-org/button";
-import { Card } from "@nextui-org/card";
+import { Navbar, NavbarContent,NavbarItem } from "@heroui/navbar";
+import { Button } from "@heroui/button";
+import { Card } from "@heroui/card";
 import { logout } from '@/app/admin/serverActions';
 import { FaUser } from "react-icons/fa6";
 

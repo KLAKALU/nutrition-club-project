@@ -5,6 +5,16 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { redirect } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerBody,
+  DrawerFooter,
+  Button,
+  useDisclosure,
+  Textarea
+} from "@heroui/react";
 
 import { PlayerProfile, BodyComposition, Nutrition, Comment } from '@/types/types';
 import { getPlayerList, getPlayerBodyComposition, getPlayerNutrition, getComment } from '@/app/admin/serverActions';
@@ -31,6 +41,8 @@ export default function Home() {
   const [nutrition, setNutrition] = useState<Nutrition[]>([]);
 
   const [currentDate, setCurrentDate] = useState<Date>(dayjs().toDate());
+
+  const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
   useEffect(() => {
     console.log("useEffect1Called")
@@ -128,7 +140,35 @@ export default function Home() {
           <div className='w-[20vw]'>
             <UserList playerList={players} selectPlayerChange={handleSelectPlayerChange} />
           </div>
-          {selectPlayer ? <NutritionCard nutrition={nutrition} selectPlayer={selectPlayer} currentDate={currentDate} bodyComposition={bodyComposition} comment={comment[0]}/> : <div>選手を選択してください</div>}
+          {selectPlayer ? <NutritionCard nutrition={nutrition} selectPlayer={selectPlayer} currentDate={currentDate} bodyComposition={bodyComposition} comment={comment[0]} onEditOpen = {onOpen}/> : <div>選手を選択してください</div>}
+        </div>
+        <div>
+        <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
+        <DrawerContent>
+          {(onClose) => (
+            <>
+              <DrawerHeader className="flex flex-col gap-1">コメント編集</DrawerHeader>
+              <DrawerBody>
+                <Textarea
+                                className="max-w-xs"
+                                defaultValue={comment[0].comment}
+                                labelPlacement="outside"
+                                placeholder="Enter your description"
+                                variant="bordered"
+                            />
+              </DrawerBody>
+              <DrawerFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  閉じる
+                </Button>
+                <Button color="primary" onPress={onClose}>
+                  変更
+                </Button>
+              </DrawerFooter>
+            </>
+          )}
+        </DrawerContent>
+      </Drawer>
         </div>
       </main>
     </div>

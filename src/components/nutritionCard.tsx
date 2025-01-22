@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import dayjs from 'dayjs';
-import { Input } from "@nextui-org/input";
-import { Card, CardHeader, Divider, Button, Textarea} from "@nextui-org/react"
+import { Input } from "@heroui/input";
+import { Card, CardHeader, Divider, Button, Textarea} from "@heroui/react"
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 
 import { BodyComposition, Nutrition, PlayerProfile, Comment } from '@/types/types';
@@ -18,9 +18,10 @@ type NutritionCardProps = {
     currentDate: Date;
     bodyComposition: BodyComposition[];
     comment: Comment;
+    onEditOpen: () => void;
 }
 
-export default function NutritionCard({ nutrition, selectPlayer, currentDate, bodyComposition, comment }: NutritionCardProps) {
+export default function NutritionCard({ nutrition, selectPlayer, currentDate, bodyComposition, comment, onEditOpen }: NutritionCardProps) {
 
     const trainingDayNutrition:Nutrition[] = nutrition.filter((n) => n.is_training_day);
 
@@ -90,19 +91,31 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                     </div>
                 </div>
                 <div className='flex flex-row'>
-                <div className=''>体組成</div>
-                <div className="w-[35vw]">
-                    <BodyCompositionGraph bodyComposition={bodyComposition} />
-                </div>
-                {comment ? <Textarea
-                    isReadOnly
-                    className="max-w-xs"
-                    defaultValue={comment.comment}
-                    label="コメント"
-                    labelPlacement="outside"
-                    placeholder="Enter your description"
-                    variant="bordered"
-                    /> : null}
+                    <div className=''>体組成</div>
+                    <div className="w-[35vw]">
+                        <BodyCompositionGraph bodyComposition={bodyComposition} />
+                    </div>
+                    {comment ? (
+                        <div className="flex flex-col gap-2 w-full">
+                            <Textarea
+                                isReadOnly
+                                className="max-w-xs"
+                                defaultValue={comment.comment}
+                                label="コメント"
+                                labelPlacement="outside"
+                                placeholder="Enter your description"
+                                variant="bordered"
+                            />
+                            <Button 
+                                color="primary" 
+                                variant="bordered"
+                                className="w-full"
+                                onPress={onEditOpen}
+                            >
+                                編集
+                            </Button>
+                        </div>
+                    ) : null}
                 </div>
             </Card>
         </div>

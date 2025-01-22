@@ -1,9 +1,9 @@
 'use client'
 
 import { signup } from './actions';
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
-import { Input } from "@nextui-org/input";
-import { Button } from "@nextui-org/button";
+import { Card, CardBody, CardHeader } from "@heroui/card";
+import { Input } from "@heroui/input";
+import { Button } from "@heroui/button";
 import { FaEnvelope } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa6";
 // import { useFormStatus } from 'react-dom';

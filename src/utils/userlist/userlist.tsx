@@ -1,6 +1,6 @@
 "use client"
-import { Listbox, ListboxItem } from "@nextui-org/react"
-import {Card, CardHeader, CardBody} from "@nextui-org/react"
+import { Listbox, ListboxItem } from "@heroui/react"
+import {Card, CardHeader, CardBody} from "@heroui/react"
 import { PlayerProfile } from "@/types/types"
 import { useState } from "react"
 

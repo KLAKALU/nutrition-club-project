@@ -62,6 +62,7 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
         if (!data) return <div>データがありません</div>;
         
         const nutrients = {
+            "エネルギー (kcal)": data.energy ?? 0,
             "タンパク質 (g)": data.protein ?? 0,
             "脂質 (g)": data.fat ?? 0,
             "炭水化物 (g)": data.carbohydrate ?? 0,
@@ -80,7 +81,7 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
         return (
             <div className="grid grid-cols-2 gap-2 p-4">
                 {Object.entries(nutrients).map(([name, value]) => (
-                    <div key={name} className="flex justify-between border-b border-gray-200 py-1">
+                    <div key={name} className="flex justify-between border-b border-gray-200 text-small">
                         <span>{name}</span>
                         <span>{typeof value === 'number' ? value.toFixed(1) : '0.0'}</span>
                     </div>
@@ -99,7 +100,7 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                     <FaAngleRight />
                 </Button>
             </div>
-            <Card className="p-4">
+            <Card className="px-4">
                 <CardHeader className="flex items-baseline">
                     <span className="text-xl">{dayjs(SheetSelectedDay).format("YYYY")} /</span>
                     <span className="text-3xl font-bold">{dayjs(SheetSelectedDay).format("M")}</span>

@@ -11,7 +11,6 @@ import { BodyComposition, Nutrition, PlayerProfile, Comment } from '@/types/type
 import { uploadNutrition, calculateNutrition } from '@/app/admin/clientActions';
 import BodyCompositionGraph from '@/utils/graph/bodyCompositionGraph';
 import NutritionGraph from '@/utils/graph/nutritionGraph';
-import { comment } from 'postcss';
 
 type NutritionCardProps = {
     nutrition: Nutrition[];

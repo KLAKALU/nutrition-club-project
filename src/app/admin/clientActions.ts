@@ -113,3 +113,43 @@ export function setTrainingLoad(userID: string, trainingLoad: number, non_traini
     }
     updateTrainingLoad();
 }
+
+export function uploadBodyComposition(
+    userID: string, 
+    date: Date,
+    weight: string,
+    bodyFat: string,
+    muscleMass: string
+  ) {
+      const supabase = createClient();
+      
+      // 文字列を数値に変換
+      const weightNum = parseFloat(weight);
+      const bodyFatNum = parseFloat(bodyFat);
+      const muscleMassNum = parseFloat(muscleMass);
+      
+      // 数値変換のバリデーション
+      if (isNaN(weightNum) || isNaN(bodyFatNum) || isNaN(muscleMassNum)) {
+          alert("入力値が不正です。数値を入力してください。");
+          return;
+      }
+      const upload = async () => {
+        const { error } = await supabase
+          .from('body_composition')
+          .insert([{ 
+              player_id: userID, 
+              year_month: date, 
+              weight: weightNum,
+              muscle_mass: muscleMassNum,
+              body_fat: bodyFatNum 
+          }]);
+      if (error) {
+          console.log(error);
+          alert("体組成データのアップロードに失敗しました");
+          return;
+      }
+    }
+    upload();
+
+    alert("体組成データを保存しました");
+  }

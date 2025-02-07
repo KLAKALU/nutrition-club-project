@@ -17,11 +17,12 @@ type NutritionCardProps = {
     selectPlayer: PlayerProfile;
     currentDate: Date;
     bodyComposition: BodyComposition[];
-    comment: Comment;
-    onEditOpen: () => void;
+    commentList: Comment[];
+    is_admin: boolean;
+    onEditOpen: () => void | undefined;
 }
 
-export default function NutritionCard({ nutrition, selectPlayer, currentDate, bodyComposition, comment, onEditOpen }: NutritionCardProps) {
+export default function NutritionCard({ nutrition, selectPlayer, currentDate, bodyComposition, commentList, is_admin, onEditOpen }: NutritionCardProps) {
 
     const [isGraphMode, setIsGraphMode] = useState(true);
 
@@ -39,6 +40,7 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
     const trainingDayNutritionRatio = trainingDayNutrition.map((n) => calculateNutrition(n, bodyComposition[0], selectPlayer.training_load!));
 
     const nonTrainingDayNutritionRatio = nonTrainingDayNutrition.map((n) => calculateNutrition(n, bodyComposition[0], selectPlayer.non_training_load!));
+    const comment = commentList.find((c) => dayjs(c.date).isSame(dayjs(currentDate), 'day'));
     
     console.log(trainingDayNutrition);
     console.log(nonTrainingDayNutrition);
@@ -137,8 +139,9 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                             <div>データがありません</div>
                         )}
                     </div>
-                </div>
-                <div className="flex flex-row gap-4">
+                </div>{
+                    is_admin && (
+                        <div className="flex flex-row gap-4">
                     <div className="w-[35vw]">
                         {selectPlayer && <Input type="file" onChange={handleFileChange(true)} />}
                     </div>
@@ -146,6 +149,8 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                         {selectPlayer && <Input type="file" onChange={handleFileChange(false)} />}
                     </div>
                 </div>
+                    )
+                }
                 <div className="flex flex-row gap-4">
                     <div className="text-lg">体組成</div>
                     <div className="w-[35vw]">
@@ -162,14 +167,16 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                                 placeholder="Enter your description"
                                 variant="bordered"
                             />
-                            <Button 
-                                color="primary" 
-                                variant="bordered"
-                                className="w-full"
-                                onPress={onEditOpen}
-                            >
-                                編集
-                            </Button>
+                            {is_admin && (
+                                <Button 
+                                    color="primary" 
+                                    variant="bordered"
+                                    className="w-full"
+                                    onPress={onEditOpen}
+                                >
+                                    編集
+                                </Button>
+                            )}
                         </div>
                     )}
                 </div>

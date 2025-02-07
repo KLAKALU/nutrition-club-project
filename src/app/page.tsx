@@ -10,6 +10,8 @@ import {
   useDisclosure,
 } from "@heroui/react";
 
+import { useRouter } from 'next/navigation'
+
 import { FaPlus } from "react-icons/fa6";
 
 import { BodyComposition, Nutrition, PlayerProfile, Comment } from '@/types/types';
@@ -22,6 +24,7 @@ import PlayerDrawer from '@/components/Drawer';
 
 
 export default function Home() {
+  const router = useRouter();
 
   const [userData, setUserData] = useState<User>();
 
@@ -72,9 +75,10 @@ export default function Home() {
         }
         
         setPlayerProfile(playerProfileData);
+        console.log(playerProfileData);
 
         if (!playerProfileData.is_initial_setup_done) {
-          redirect('/initial_setup');
+          router.push('/initial_setup');
         }
       } catch (error) {
         console.error('予期せぬエラーが発生しました:', error);
@@ -82,7 +86,7 @@ export default function Home() {
     };
   
     checkAuthAndSetupUser();
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (!userData) {

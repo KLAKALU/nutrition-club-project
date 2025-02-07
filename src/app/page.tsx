@@ -132,7 +132,7 @@ export default function Home() {
     <div className="">
       <main className="">
         <Header userEmail={userData?.email} />
-        <div className="">
+        <div className="px-[10vw]">
           {playerProfile ? <NutritionCard nutrition={nutrition} selectPlayer={playerProfile} currentDate={currentDate} bodyComposition={bodyComposition} commentList={comment} is_admin={false}/> : <div>選手情報の取得に失敗しました</div>}
         </div>
         <Button 

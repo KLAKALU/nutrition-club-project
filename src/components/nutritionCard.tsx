@@ -122,13 +122,13 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                 </CardHeader>
                 <Divider />
                 <div className="py-2">
-                    <div className="text-lg">必須栄養素</div>
+                    <div className="text-lg">必須栄養素(運動時/非運動時)</div>
                     <Switch isSelected={isGraphMode} onValueChange={setIsGraphMode}>
                         グラフモード
                     </Switch>
                 </div>
-                <div className="flex flex-row h-[35vh] gap-4">
-                    <div className="w-[35vw]">
+                <div className="flex flex-row h-[35vh] gap-4 w-full">
+                    <div className="w-[40%]">
                         {trainingDayNutrition.length ? (
                             isGraphMode ? 
                                 <NutritionGraph graphprops={trainingDayNutritionRatio}/> :
@@ -137,7 +137,7 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                             <div>データがありません</div>
                         )}
                     </div>
-                    <div className="w-[35vw]">
+                    <div className="w-[40%]">
                         {nonTrainingDayNutrition.length ? (
                             isGraphMode ? 
                                 <NutritionGraph graphprops={nonTrainingDayNutritionRatio} /> :
@@ -149,10 +149,10 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                 </div>{
                     is_admin && (
                         <div className="flex flex-row gap-4">
-                    <div className="w-[35vw]">
+                    <div className="w-[50%]">
                         {selectPlayer && <Input type="file" onChange={handleFileChange(true)} />}
                     </div>
-                    <div className="w-[35vw]">
+                    <div className="w-[50%]">
                         {selectPlayer && <Input type="file" onChange={handleFileChange(false)} />}
                     </div>
                 </div>
@@ -160,10 +160,10 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                 }
                 <div className="flex flex-row gap-4">
                     <div className="text-lg">体組成</div>
-                    <div className="w-[35vw]">
+                    <div className="w-[50%]">
                         <BodyCompositionGraph bodyComposition={bodyComposition} />
                     </div>
-                        <div className="flex flex-col gap-2 w-full">
+                        <div className="flex flex-col gap-2 w-[50%]">
                             <Textarea
                                 isReadOnly
                                 className="max-w-xs"

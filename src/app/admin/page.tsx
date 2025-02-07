@@ -18,7 +18,7 @@ import {
 
 import { PlayerProfile, BodyComposition, Nutrition, Comment } from '@/types/types';
 import { getPlayerList, getPlayerBodyComposition, getPlayerNutrition, getComment } from '@/app/admin/serverActions';
-import { setTrainingLoad } from '@/app/admin/clientActions';
+import { setTrainingLoad, uploadComment } from '@/app/admin/clientActions';
 
 
 import Header  from '@/utils/header/header';
@@ -43,6 +43,8 @@ export default function Home() {
   const [currentDate, setCurrentDate] = useState<Date>(dayjs().toDate());
 
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
+
+  const [editComment, setEditComment] = useState('');
 
   useEffect(() => {
     console.log("useEffect1Called")
@@ -106,8 +108,9 @@ export default function Home() {
       }
     }
     fetchComment();
+    setEditComment(comment[0].comment);
     
-  }, [selectPlayer,currentDate]);
+  }, [selectPlayer,currentDate,comment]);
 
   console.log(bodyComposition);
 
@@ -143,7 +146,8 @@ export default function Home() {
           {selectPlayer ? <NutritionCard nutrition={nutrition} selectPlayer={selectPlayer} currentDate={currentDate} bodyComposition={bodyComposition} commentList={comment} is_admin onEditOpen = {onOpen}/> : <div>選手を選択してください</div>}
         </div>
         <div>
-        <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
+          {selectPlayer ?
+          <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
         <DrawerContent>
           {(onClose) => (
             <>
@@ -151,17 +155,18 @@ export default function Home() {
               <DrawerBody>
                 <Textarea
                                 className="max-w-xs"
-                                defaultValue={comment[0].comment}
                                 labelPlacement="outside"
                                 placeholder="Enter your description"
                                 variant="bordered"
+                                value={editComment}
+                                onChange={(e) => setEditComment(e.target.value)}
                             />
               </DrawerBody>
               <DrawerFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
                   閉じる
                 </Button>
-                <Button color="primary" onPress={onClose}>
+                <Button color="primary" onPress={() => { onClose(); uploadComment(selectPlayer.id, currentDate, editComment); setComment(comment.map((comment) => { if (comment.date === currentDate) { return { ...comment, comment: editComment }; } return comment; })); }}>
                   変更
                 </Button>
               </DrawerFooter>
@@ -169,6 +174,7 @@ export default function Home() {
           )}
         </DrawerContent>
       </Drawer>
+      : <div></div>}
         </div>
       </main>
     </div>

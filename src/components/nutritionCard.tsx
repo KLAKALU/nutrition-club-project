@@ -11,6 +11,7 @@ import { BodyComposition, Nutrition, PlayerProfile, Comment } from '@/types/type
 import { uploadNutrition, calculateNutrition } from '@/app/admin/clientActions';
 import BodyCompositionGraph from '@/utils/graph/bodyCompositionGraph';
 import NutritionGraph from '@/utils/graph/nutritionGraph';
+import { comment } from 'postcss';
 
 type NutritionCardProps = {
     nutrition: Nutrition[];
@@ -28,6 +29,8 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
 
     const [SheetSelectedDay, setSheetSelectedDay] = useState<Date>(currentDate);
 
+    const [sheetIndex, setSheetIndex] = useState(0);
+
     if (!selectPlayer.non_training_load || !selectPlayer.training_load) {
         alert("トレーニング負荷が設定されていません");
         return null;
@@ -40,12 +43,15 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
     const trainingDayNutritionRatio = trainingDayNutrition.map((n) => calculateNutrition(n, bodyComposition[0], selectPlayer.training_load!));
 
     const nonTrainingDayNutritionRatio = nonTrainingDayNutrition.map((n) => calculateNutrition(n, bodyComposition[0], selectPlayer.non_training_load!));
-    const comment = commentList.find((c) => dayjs(c.date).isSame(dayjs(currentDate), 'day'));
+    //const comment = commentList.find((c) => dayjs(c.date).isSame(dayjs(currentDate), 'day'));
+
+    //const currentIndex = commentList.length - 1 - sheetIndex;
     
     console.log(trainingDayNutrition);
     console.log(nonTrainingDayNutrition);
     console.log(trainingDayNutritionRatio);
     console.log(nonTrainingDayNutritionRatio);
+    console.log(commentList);
 
     const incrementSheetDateMonth = () => {
         // 現在の月より加算できないようにする
@@ -53,10 +59,12 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
             return;
         }
         setSheetSelectedDay(dayjs(SheetSelectedDay).add(1, "M").toDate());
+        setSheetIndex(sheetIndex - 1);
     }
 
     const decrementSheetDateMonth = () => {
         setSheetSelectedDay(dayjs(SheetSelectedDay).subtract(1, "M").toDate());
+        setSheetIndex(sheetIndex + 1);
     }
 
     const handleFileChange = (is_training_day: boolean) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,7 +133,7 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                         {trainingDayNutrition.length ? (
                             isGraphMode ? 
                                 <NutritionGraph graphprops={trainingDayNutritionRatio}/> :
-                                renderNutritionData(trainingDayNutrition[0])
+                                renderNutritionData(trainingDayNutrition[-sheetIndex])
                         ) : (
                             <div>データがありません</div>
                         )}
@@ -134,7 +142,7 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                         {nonTrainingDayNutrition.length ? (
                             isGraphMode ? 
                                 <NutritionGraph graphprops={nonTrainingDayNutritionRatio} /> :
-                                renderNutritionData(nonTrainingDayNutrition[0])
+                                renderNutritionData(nonTrainingDayNutrition[-sheetIndex])
                         ) : (
                             <div>データがありません</div>
                         )}
@@ -156,12 +164,11 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                     <div className="w-[35vw]">
                         <BodyCompositionGraph bodyComposition={bodyComposition} />
                     </div>
-                    {comment && (
                         <div className="flex flex-col gap-2 w-full">
                             <Textarea
                                 isReadOnly
                                 className="max-w-xs"
-                                defaultValue={comment.comment}
+                                value={commentList[sheetIndex]?.comment ? commentList[sheetIndex]?.comment : "No comment"}
                                 label="コメント"
                                 labelPlacement="outside"
                                 placeholder="Enter your description"
@@ -178,7 +185,6 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                                 </Button>
                             )}
                         </div>
-                    )}
                 </div>
             </Card>
         </div>

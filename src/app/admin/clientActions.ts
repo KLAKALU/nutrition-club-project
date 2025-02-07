@@ -153,3 +153,19 @@ export function uploadBodyComposition(
 
     alert("体組成データを保存しました");
   }
+
+export function uploadComment(userID: string, date: Date, comment: string) {
+    const supabase = createClient();
+    const upload = async () => {
+        const { error } = await supabase
+            .from('comment')
+            .insert([{ player_id: userID, date: date, comment: comment }]);
+        if (error) {
+            console.log(error);
+            alert("コメントのアップロードに失敗しました");
+            return;
+        }
+    }
+    upload();
+    alert("コメントを保存しました");
+}

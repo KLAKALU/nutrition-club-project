@@ -17,28 +17,40 @@ type NutritionCardProps = {
     selectPlayer: PlayerProfile;
     currentDate: Date;
     bodyComposition: BodyComposition[];
-    comment: Comment;
-    onEditOpen: () => void;
+    commentList: Comment[];
+    is_admin: boolean;
+    onEditOpen: () => void | undefined;
 }
 
-export default function NutritionCard({ nutrition, selectPlayer, currentDate, bodyComposition, comment, onEditOpen }: NutritionCardProps) {
+export default function NutritionCard({ nutrition, selectPlayer, currentDate, bodyComposition, commentList, is_admin, onEditOpen }: NutritionCardProps) {
+
+    const [isGraphMode, setIsGraphMode] = useState(true);
+
+    const [SheetSelectedDay, setSheetSelectedDay] = useState<Date>(currentDate);
+
+    const [sheetIndex, setSheetIndex] = useState(0);
+
+    if (!selectPlayer.non_training_load || !selectPlayer.training_load) {
+        alert("トレーニング負荷が設定されていません");
+        return null;
+    }
 
     const trainingDayNutrition:Nutrition[] = nutrition.filter((n) => n.is_training_day);
 
     const nonTrainingDayNutrition:Nutrition[] = nutrition.filter((n) => !n.is_training_day);
 
-    const trainingDayNutritionRatio = trainingDayNutrition.map((n) => calculateNutrition(n, bodyComposition[0], true));
+    const trainingDayNutritionRatio = trainingDayNutrition.map((n) => calculateNutrition(n, bodyComposition[0], selectPlayer.training_load!));
 
-    const nonTrainingDayNutritionRatio = nonTrainingDayNutrition.map((n) => calculateNutrition(n, bodyComposition[0], false));
+    const nonTrainingDayNutritionRatio = nonTrainingDayNutrition.map((n) => calculateNutrition(n, bodyComposition[0], selectPlayer.non_training_load!));
+    //const comment = commentList.find((c) => dayjs(c.date).isSame(dayjs(currentDate), 'day'));
 
-    const [isGraphMode, setIsGraphMode] = useState(true);
-
+    //const currentIndex = commentList.length - 1 - sheetIndex;
+    
     console.log(trainingDayNutrition);
     console.log(nonTrainingDayNutrition);
     console.log(trainingDayNutritionRatio);
     console.log(nonTrainingDayNutritionRatio);
-
-    const [SheetSelectedDay, setSheetSelectedDay] = useState<Date>(currentDate);
+    console.log(commentList);
 
     const incrementSheetDateMonth = () => {
         // 現在の月より加算できないようにする
@@ -46,10 +58,12 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
             return;
         }
         setSheetSelectedDay(dayjs(SheetSelectedDay).add(1, "M").toDate());
+        setSheetIndex(sheetIndex - 1);
     }
 
     const decrementSheetDateMonth = () => {
         setSheetSelectedDay(dayjs(SheetSelectedDay).subtract(1, "M").toDate());
+        setSheetIndex(sheetIndex + 1);
     }
 
     const handleFileChange = (is_training_day: boolean) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,6 +76,7 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
         if (!data) return <div>データがありません</div>;
         
         const nutrients = {
+            "エネルギー (kcal)": data.energy ?? 0,
             "タンパク質 (g)": data.protein ?? 0,
             "脂質 (g)": data.fat ?? 0,
             "炭水化物 (g)": data.carbohydrate ?? 0,
@@ -80,7 +95,7 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
         return (
             <div className="grid grid-cols-2 gap-2 p-4">
                 {Object.entries(nutrients).map(([name, value]) => (
-                    <div key={name} className="flex justify-between border-b border-gray-200 py-1">
+                    <div key={name} className="flex justify-between border-b border-gray-200 text-small">
                         <span>{name}</span>
                         <span>{typeof value === 'number' ? value.toFixed(1) : '0.0'}</span>
                     </div>
@@ -99,7 +114,7 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                     <FaAngleRight />
                 </Button>
             </div>
-            <Card className="p-4">
+            <Card className="px-4">
                 <CardHeader className="flex items-baseline">
                     <span className="text-xl">{dayjs(SheetSelectedDay).format("YYYY")} /</span>
                     <span className="text-3xl font-bold">{dayjs(SheetSelectedDay).format("M")}</span>
@@ -116,8 +131,8 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                     <div className="w-[35vw]">
                         {trainingDayNutrition.length ? (
                             isGraphMode ? 
-                                <NutritionGraph graphprops={trainingDayNutritionRatio} /> :
-                                renderNutritionData(trainingDayNutrition[0])
+                                <NutritionGraph graphprops={trainingDayNutritionRatio}/> :
+                                renderNutritionData(trainingDayNutrition[-sheetIndex])
                         ) : (
                             <div>データがありません</div>
                         )}
@@ -126,13 +141,14 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                         {nonTrainingDayNutrition.length ? (
                             isGraphMode ? 
                                 <NutritionGraph graphprops={nonTrainingDayNutritionRatio} /> :
-                                renderNutritionData(nonTrainingDayNutrition[0])
+                                renderNutritionData(nonTrainingDayNutrition[-sheetIndex])
                         ) : (
                             <div>データがありません</div>
                         )}
                     </div>
-                </div>
-                <div className="flex flex-row gap-4">
+                </div>{
+                    is_admin && (
+                        <div className="flex flex-row gap-4">
                     <div className="w-[35vw]">
                         {selectPlayer && <Input type="file" onChange={handleFileChange(true)} />}
                     </div>
@@ -140,32 +156,34 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                         {selectPlayer && <Input type="file" onChange={handleFileChange(false)} />}
                     </div>
                 </div>
+                    )
+                }
                 <div className="flex flex-row gap-4">
                     <div className="text-lg">体組成</div>
                     <div className="w-[35vw]">
                         <BodyCompositionGraph bodyComposition={bodyComposition} />
                     </div>
-                    {comment && (
                         <div className="flex flex-col gap-2 w-full">
                             <Textarea
                                 isReadOnly
                                 className="max-w-xs"
-                                defaultValue={comment.comment}
+                                value={commentList[sheetIndex]?.comment ? commentList[sheetIndex]?.comment : "No comment"}
                                 label="コメント"
                                 labelPlacement="outside"
                                 placeholder="Enter your description"
                                 variant="bordered"
                             />
-                            <Button 
-                                color="primary" 
-                                variant="bordered"
-                                className="w-full"
-                                onPress={onEditOpen}
-                            >
-                                編集
-                            </Button>
+                            {is_admin && (
+                                <Button 
+                                    color="primary" 
+                                    variant="bordered"
+                                    className="w-full"
+                                    onPress={onEditOpen}
+                                >
+                                    編集
+                                </Button>
+                            )}
                         </div>
-                    )}
                 </div>
             </Card>
         </div>

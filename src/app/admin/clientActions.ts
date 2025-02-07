@@ -31,9 +31,9 @@ function dataToObject(csv: string) {
     return nutrition;
 }
 
-export function calculateNutrition(nutrition: Nutrition, playerBodyComposition: BodyComposition, is_training_day: boolean) {
+export function calculateNutrition(nutrition: Nutrition, playerBodyComposition: BodyComposition, training_load: number) {
     const nonFatBodyWeight = playerBodyComposition.weight * (1 - (playerBodyComposition.body_fat / 100));
-    const totalEnergy = nonFatBodyWeight * 28.5 * (is_training_day ? 2.0 : 1.75);
+    const totalEnergy = nonFatBodyWeight * 28.5 * training_load;
     const totalProtein = nonFatBodyWeight * 2.2;
     const totalCarbohydrate = playerBodyComposition.weight * 8.0;
     const totalFat = ((nonFatBodyWeight * 28.5 * 2.0) - totalProtein - totalCarbohydrate) / 9.0;
@@ -42,7 +42,7 @@ export function calculateNutrition(nutrition: Nutrition, playerBodyComposition: 
 
     const nutritionData: Nutrition = {
         ...nutrition,
-        is_training_day: is_training_day,
+        //is_training_day: is_training_day,
         energy: toPercents(nutrition.energy / totalEnergy),
         protein: toPercents(nutrition.protein / totalProtein),
         fat: toPercents(nutrition.fat / totalFat),
@@ -113,3 +113,43 @@ export function setTrainingLoad(userID: string, trainingLoad: number, non_traini
     }
     updateTrainingLoad();
 }
+
+export function uploadBodyComposition(
+    userID: string, 
+    date: Date,
+    weight: string,
+    bodyFat: string,
+    muscleMass: string
+  ) {
+      const supabase = createClient();
+      
+      // 文字列を数値に変換
+      const weightNum = parseFloat(weight);
+      const bodyFatNum = parseFloat(bodyFat);
+      const muscleMassNum = parseFloat(muscleMass);
+      
+      // 数値変換のバリデーション
+      if (isNaN(weightNum) || isNaN(bodyFatNum) || isNaN(muscleMassNum)) {
+          alert("入力値が不正です。数値を入力してください。");
+          return;
+      }
+      const upload = async () => {
+        const { error } = await supabase
+          .from('body_composition')
+          .insert([{ 
+              player_id: userID, 
+              year_month: date, 
+              weight: weightNum,
+              muscle_mass: muscleMassNum,
+              body_fat: bodyFatNum 
+          }]);
+      if (error) {
+          console.log(error);
+          alert("体組成データのアップロードに失敗しました");
+          return;
+      }
+    }
+    upload();
+
+    alert("体組成データを保存しました");
+  }

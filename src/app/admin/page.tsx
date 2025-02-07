@@ -140,7 +140,7 @@ export default function Home() {
           <div className='w-[20vw]'>
             <UserList playerList={players} selectPlayerChange={handleSelectPlayerChange} />
           </div>
-          {selectPlayer ? <NutritionCard nutrition={nutrition} selectPlayer={selectPlayer} currentDate={currentDate} bodyComposition={bodyComposition} comment={comment[0]} onEditOpen = {onOpen}/> : <div>選手を選択してください</div>}
+          {selectPlayer ? <NutritionCard nutrition={nutrition} selectPlayer={selectPlayer} currentDate={currentDate} bodyComposition={bodyComposition} commentList={comment} is_admin onEditOpen = {onOpen}/> : <div>選手を選択してください</div>}
         </div>
         <div>
         <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>

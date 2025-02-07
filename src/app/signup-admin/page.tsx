@@ -46,7 +46,7 @@ export default function SignupPage() {
         </CardHeader>
         <CardBody>
           <form className="space-y-4" action={handleSubmit}>
-            <div>
+            <div className='pb-4'>
               <Input
                 id="email"
                 name="email"
@@ -57,10 +57,9 @@ export default function SignupPage() {
                 required
                 placeholder="your@email.com"
                 startContent={<FaEnvelope />}
-                className="pb-4"
               />
             </div>
-            <div>
+            <div className='pb-4'>
               <Input
                 id="password"
                 name="password"

@@ -8,8 +8,8 @@ export interface PlayerProfile {
     last_name: string;
     age: number;
     club: string;
-    non_training_load?: number;
-    training_load?: number;
+    non_training_load: number | null;
+    training_load: number | null;
 }
 
 export interface BodyComposition {

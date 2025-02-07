@@ -23,22 +23,27 @@ type NutritionCardProps = {
 
 export default function NutritionCard({ nutrition, selectPlayer, currentDate, bodyComposition, comment, onEditOpen }: NutritionCardProps) {
 
+    const [isGraphMode, setIsGraphMode] = useState(true);
+
+    const [SheetSelectedDay, setSheetSelectedDay] = useState<Date>(currentDate);
+
+    if (!selectPlayer.non_training_load || !selectPlayer.training_load) {
+        alert("トレーニング負荷が設定されていません");
+        return null;
+    }
+
     const trainingDayNutrition:Nutrition[] = nutrition.filter((n) => n.is_training_day);
 
     const nonTrainingDayNutrition:Nutrition[] = nutrition.filter((n) => !n.is_training_day);
 
-    const trainingDayNutritionRatio = trainingDayNutrition.map((n) => calculateNutrition(n, bodyComposition[0], true));
+    const trainingDayNutritionRatio = trainingDayNutrition.map((n) => calculateNutrition(n, bodyComposition[0], selectPlayer.training_load!));
 
-    const nonTrainingDayNutritionRatio = nonTrainingDayNutrition.map((n) => calculateNutrition(n, bodyComposition[0], false));
-
-    const [isGraphMode, setIsGraphMode] = useState(true);
-
+    const nonTrainingDayNutritionRatio = nonTrainingDayNutrition.map((n) => calculateNutrition(n, bodyComposition[0], selectPlayer.non_training_load!));
+    
     console.log(trainingDayNutrition);
     console.log(nonTrainingDayNutrition);
     console.log(trainingDayNutritionRatio);
     console.log(nonTrainingDayNutritionRatio);
-
-    const [SheetSelectedDay, setSheetSelectedDay] = useState<Date>(currentDate);
 
     const incrementSheetDateMonth = () => {
         // 現在の月より加算できないようにする
@@ -117,7 +122,7 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                     <div className="w-[35vw]">
                         {trainingDayNutrition.length ? (
                             isGraphMode ? 
-                                <NutritionGraph graphprops={trainingDayNutritionRatio} /> :
+                                <NutritionGraph graphprops={trainingDayNutritionRatio}/> :
                                 renderNutritionData(trainingDayNutrition[0])
                         ) : (
                             <div>データがありません</div>

@@ -28,17 +28,17 @@ export async function saveSettings(formData: FormData) {
 
   // ユーザープロファイルの更新
   const { error: updateError } = await supabase
-  .from('player_profiles')
-  .upsert({
-    id: user.id,
-    last_name: settingsData.lastName,
-    first_name: settingsData.firstName,
-    age: settingsData.age,
-    club: settingsData.club,
-    is_initial_setup_done: true
-  }, {
-    onConflict: 'id'
-  })
+    .from('player_profiles')
+    .upsert({
+      id: user.id,
+      last_name: settingsData.lastName,
+      first_name: settingsData.firstName,
+      age: settingsData.age,
+      club: settingsData.club,
+      is_initial_setup_done: true
+    }, {
+      onConflict: 'id'
+    })
 
   if (updateError) {
     redirect('/error')

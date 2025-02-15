@@ -9,10 +9,10 @@ import { useState } from 'react';
 
 function SubmitButton({ isDisabled }: { isDisabled: boolean }) {
   return (
-    <Button 
-      type="submit" 
-      color="primary" 
-      size="lg" 
+    <Button
+      type="submit"
+      color="primary"
+      size="lg"
       fullWidth
       isDisabled={isDisabled}
     >
@@ -23,10 +23,10 @@ function SubmitButton({ isDisabled }: { isDisabled: boolean }) {
 
 export default function SignupPage() {
   const [formError, setFormError] = useState<string>('');
-  
+
   const handleSubmit = async (formData: FormData) => {
     setFormError('');
-    
+
     try {
       await signup(formData);
     } catch (error) {

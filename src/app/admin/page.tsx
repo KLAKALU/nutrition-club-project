@@ -21,7 +21,7 @@ import { getPlayerList, getPlayerBodyComposition, getPlayerNutrition, getComment
 import { setTrainingLoad, uploadComment } from '@/app/admin/clientActions';
 
 
-import Header  from '@/utils/header/header';
+import Header from '@/utils/header/header';
 import NutritionCard from '@/components/nutritionCard';
 import UserList from '@/utils/userlist/userlist';
 
@@ -42,7 +42,7 @@ export default function Home() {
 
   const [currentDate, setCurrentDate] = useState<Date>(dayjs().toDate());
 
-  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const [editComment, setEditComment] = useState('');
 
@@ -109,8 +109,8 @@ export default function Home() {
     }
     fetchComment();
     setEditComment(comment[0].comment);
-    
-  }, [selectPlayer,currentDate,comment]);
+
+  }, [selectPlayer, currentDate, comment]);
 
   console.log(bodyComposition);
 
@@ -134,47 +134,47 @@ export default function Home() {
       ));
     }
   };
-  
+
   return (
     <div className="">
       <main className="">
-        <Header userEmail = {userData?.email}/>
+        <Header userEmail={userData?.email} />
         <div className="flex flex-row">
           <div className='w-[20vw]'>
             <UserList playerList={players} selectPlayerChange={handleSelectPlayerChange} />
           </div>
-          {selectPlayer ? <NutritionCard nutrition={nutrition} selectPlayer={selectPlayer} currentDate={currentDate} bodyComposition={bodyComposition} commentList={comment} is_admin onEditOpen = {onOpen}/> : <div>選手を選択してください</div>}
+          {selectPlayer ? <NutritionCard nutrition={nutrition} selectPlayer={selectPlayer} currentDate={currentDate} bodyComposition={bodyComposition} commentList={comment} is_admin onEditOpen={onOpen} /> : <div>選手を選択してください</div>}
         </div>
         <div>
           {selectPlayer ?
-          <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
-        <DrawerContent>
-          {(onClose) => (
-            <>
-              <DrawerHeader className="flex flex-col gap-1">コメント編集</DrawerHeader>
-              <DrawerBody>
-                <Textarea
-                                className="max-w-xs"
-                                labelPlacement="outside"
-                                placeholder="Enter your description"
-                                variant="bordered"
-                                value={editComment}
-                                onChange={(e) => setEditComment(e.target.value)}
-                            />
-              </DrawerBody>
-              <DrawerFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  閉じる
-                </Button>
-                <Button color="primary" onPress={() => { onClose(); uploadComment(selectPlayer.id, currentDate, editComment); setComment(comment.map((comment) => { if (comment.date === currentDate) { return { ...comment, comment: editComment }; } return comment; })); }}>
-                  変更
-                </Button>
-              </DrawerFooter>
-            </>
-          )}
-        </DrawerContent>
-      </Drawer>
-      : <div></div>}
+            <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
+              <DrawerContent>
+                {(onClose) => (
+                  <>
+                    <DrawerHeader className="flex flex-col gap-1">コメント編集</DrawerHeader>
+                    <DrawerBody>
+                      <Textarea
+                        className="max-w-xs"
+                        labelPlacement="outside"
+                        placeholder="Enter your description"
+                        variant="bordered"
+                        value={editComment}
+                        onChange={(e) => setEditComment(e.target.value)}
+                      />
+                    </DrawerBody>
+                    <DrawerFooter>
+                      <Button color="danger" variant="light" onPress={onClose}>
+                        閉じる
+                      </Button>
+                      <Button color="primary" onPress={() => { onClose(); uploadComment(selectPlayer.id, currentDate, editComment); setComment(comment.map((comment) => { if (comment.date === currentDate) { return { ...comment, comment: editComment }; } return comment; })); }}>
+                        変更
+                      </Button>
+                    </DrawerFooter>
+                  </>
+                )}
+              </DrawerContent>
+            </Drawer>
+            : <div></div>}
         </div>
       </main>
     </div>

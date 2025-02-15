@@ -7,7 +7,7 @@ import { Button } from "@heroui/button";
 
 function SubmitButton() {
   return (
-    <Button 
+    <Button
       type="submit"
       color="primary"
       size="lg"

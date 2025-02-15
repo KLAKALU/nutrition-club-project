@@ -77,7 +77,7 @@ export default function NutritionGraph(graphprops: NutritionGraphProps) {
   const dinnerNutritionList = dinnerNutrition ? NutritionObjectToList(dinnerNutrition) : [];
   console.log(breakfastNutritionList);
 
-  const explainfotter = (tooltipItems: { label: keyof typeof nutritionExplainTexts}[]) => {
+  const explainfotter = (tooltipItems: { label: keyof typeof nutritionExplainTexts }[]) => {
     const nutritionExplainText = nutritionExplainTexts[tooltipItems[0].label];
     const explainText = nutritionExplainText.match(/.{1,10}/g);
     return explainText;

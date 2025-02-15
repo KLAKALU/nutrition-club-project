@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import dayjs from 'dayjs';
 import { Input } from "@heroui/input";
-import { Card, CardHeader, Divider, Button, Textarea, Switch} from "@heroui/react"
+import { Card, CardHeader, Divider, Button, Textarea, Switch } from "@heroui/react"
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 
 import { BodyComposition, Nutrition, PlayerProfile, Comment } from '@/types/types';
@@ -35,9 +35,9 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
         return null;
     }
 
-    const trainingDayNutrition:Nutrition[] = nutrition.filter((n) => n.is_training_day);
+    const trainingDayNutrition: Nutrition[] = nutrition.filter((n) => n.is_training_day);
 
-    const nonTrainingDayNutrition:Nutrition[] = nutrition.filter((n) => !n.is_training_day);
+    const nonTrainingDayNutrition: Nutrition[] = nutrition.filter((n) => !n.is_training_day);
 
     const trainingDayNutritionRatio = trainingDayNutrition.map((n) => calculateNutrition(n, bodyComposition[0], selectPlayer.training_load!));
 
@@ -45,7 +45,7 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
     //const comment = commentList.find((c) => dayjs(c.date).isSame(dayjs(currentDate), 'day'));
 
     //const currentIndex = commentList.length - 1 - sheetIndex;
-    
+
     console.log(trainingDayNutrition);
     console.log(nonTrainingDayNutrition);
     console.log(trainingDayNutritionRatio);
@@ -74,7 +74,7 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
 
     const renderNutritionData = (data: Nutrition | null) => {
         if (!data) return <div>データがありません</div>;
-        
+
         const nutrients = {
             "エネルギー (kcal)": data.energy ?? 0,
             "タンパク質 (g)": data.protein ?? 0,
@@ -130,8 +130,8 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                 <div className="flex flex-row h-[35vh] gap-4 w-full">
                     <div className="w-[40%]">
                         {trainingDayNutrition.length ? (
-                            isGraphMode ? 
-                                <NutritionGraph graphprops={trainingDayNutritionRatio}/> :
+                            isGraphMode ?
+                                <NutritionGraph graphprops={trainingDayNutritionRatio} /> :
                                 renderNutritionData(trainingDayNutrition[-sheetIndex])
                         ) : (
                             <div>データがありません</div>
@@ -139,7 +139,7 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                     </div>
                     <div className="w-[40%]">
                         {nonTrainingDayNutrition.length ? (
-                            isGraphMode ? 
+                            isGraphMode ?
                                 <NutritionGraph graphprops={nonTrainingDayNutritionRatio} /> :
                                 renderNutritionData(nonTrainingDayNutrition[-sheetIndex])
                         ) : (
@@ -149,13 +149,13 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                 </div>{
                     is_admin && (
                         <div className="flex flex-row gap-4">
-                    <div className="w-[50%]">
-                        {selectPlayer && <Input type="file" onChange={handleFileChange(true)} />}
-                    </div>
-                    <div className="w-[50%]">
-                        {selectPlayer && <Input type="file" onChange={handleFileChange(false)} />}
-                    </div>
-                </div>
+                            <div className="w-[50%]">
+                                {selectPlayer && <Input type="file" onChange={handleFileChange(true)} />}
+                            </div>
+                            <div className="w-[50%]">
+                                {selectPlayer && <Input type="file" onChange={handleFileChange(false)} />}
+                            </div>
+                        </div>
                     )
                 }
                 <div className="flex flex-row gap-4">
@@ -163,27 +163,27 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                     <div className="w-[50%]">
                         <BodyCompositionGraph bodyComposition={bodyComposition} />
                     </div>
-                        <div className="flex flex-col gap-2 w-[50%]">
-                            <Textarea
-                                isReadOnly
-                                className="max-w-xs"
-                                value={commentList[sheetIndex]?.comment ? commentList[sheetIndex]?.comment : "No comment"}
-                                label="コメント"
-                                labelPlacement="outside"
-                                placeholder="Enter your description"
+                    <div className="flex flex-col gap-2 w-[50%]">
+                        <Textarea
+                            isReadOnly
+                            className="max-w-xs"
+                            value={commentList[sheetIndex]?.comment ? commentList[sheetIndex]?.comment : "No comment"}
+                            label="コメント"
+                            labelPlacement="outside"
+                            placeholder="Enter your description"
+                            variant="bordered"
+                        />
+                        {is_admin && (
+                            <Button
+                                color="primary"
                                 variant="bordered"
-                            />
-                            {is_admin && (
-                                <Button 
-                                    color="primary" 
-                                    variant="bordered"
-                                    className="w-full"
-                                    onPress={onEditOpen}
-                                >
-                                    編集
-                                </Button>
-                            )}
-                        </div>
+                                className="w-full"
+                                onPress={onEditOpen}
+                            >
+                                編集
+                            </Button>
+                        )}
+                    </div>
                 </div>
             </Card>
         </div>

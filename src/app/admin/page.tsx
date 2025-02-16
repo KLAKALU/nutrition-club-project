@@ -108,8 +108,9 @@ export default function Home() {
       }
     }
     fetchComment();
-    setEditComment(comment[0].comment);
-
+    if (comment.length === 0) {
+      setEditComment(comment[0].comment);
+    }
   }, [selectPlayer, currentDate, comment]);
 
   console.log(bodyComposition);

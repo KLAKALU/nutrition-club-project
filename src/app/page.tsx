@@ -38,7 +38,7 @@ export default function Home() {
 
   const [comment, setComment] = useState<Comment[]>([]);
 
-  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   useEffect(() => {
     setCurrentDate(dayjs().toDate());
@@ -47,33 +47,33 @@ export default function Home() {
       try {
         // Supabaseクライアントの初期化
         const supabase = await createClient();
-        
+
         // ユーザー認証状態の確認
         const { data: { user }, error: authError } = await supabase.auth.getUser();
-        
+
         if (authError || !user) {
           console.error('認証エラー:', authError);
           return redirect('/login');
         }
-        
+
         setUserData(user);
-        
+
         const { data: playerProfileData, error: profileError } = await supabase
           .from('player_profiles')
           .select()
           .eq('id', user.id)
           .single();
-        
+
         if (profileError) {
           console.error('プロフィール取得エラー:', profileError);
           return;
         }
-        
+
         if (!playerProfileData) {
           console.warn('プロフィールが見つかりません');
           return;
         }
-        
+
         setPlayerProfile(playerProfileData);
         console.log(playerProfileData);
 
@@ -84,7 +84,7 @@ export default function Home() {
         console.error('予期せぬエラーが発生しました:', error);
       }
     };
-  
+
     checkAuthAndSetupUser();
   }, [router]);
 
@@ -115,15 +115,15 @@ export default function Home() {
     fetchNutrition();
 
     const fetchComment = async () => {
-          try {
-            console.log("fetchComment")
-            const comment = await getComment(userData.id);
-            setComment(comment);
-          } catch (error) {
-            alert("コメントの取得に失敗しました");
-          }
-        }
-        fetchComment();
+      try {
+        console.log("fetchComment")
+        const comment = await getComment(userData.id);
+        setComment(comment);
+      } catch (error) {
+        alert("コメントの取得に失敗しました");
+      }
+    }
+    fetchComment();
   }, [userData, currentDate]);
 
   console.log(bodyComposition);
@@ -133,18 +133,18 @@ export default function Home() {
       <main className="">
         <Header userEmail={userData?.email} />
         <div className="px-[10vw]">
-          {playerProfile ? <NutritionCard nutrition={nutrition} selectPlayer={playerProfile} currentDate={currentDate} bodyComposition={bodyComposition} commentList={comment} is_admin={false}/> : <div>選手情報の取得に失敗しました</div>}
+          {playerProfile ? <NutritionCard nutrition={nutrition} selectPlayer={playerProfile} currentDate={currentDate} bodyComposition={bodyComposition} commentList={comment} is_admin={false} /> : <div>選手情報の取得に失敗しました</div>}
         </div>
-        <Button 
-            color="primary" 
-            variant="bordered"
-            className="fixed bottom-4 right-4"
-            onPress={onOpen}
-          >
-            <FaPlus />
-          </Button>
-          {playerProfile && <PlayerDrawer userID = {playerProfile.id} currentDate={currentDate} isOpen = {isOpen} onOpenChange={onOpenChange}/>}
-          
+        <Button
+          color="primary"
+          variant="bordered"
+          className="fixed bottom-4 right-4"
+          onPress={onOpen}
+        >
+          <FaPlus />
+        </Button>
+        {playerProfile && <PlayerDrawer userID={playerProfile.id} currentDate={currentDate} isOpen={isOpen} onOpenChange={onOpenChange} />}
+
       </main>
     </div>
   );

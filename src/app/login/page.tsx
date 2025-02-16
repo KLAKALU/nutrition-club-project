@@ -13,7 +13,7 @@ function SubmitButton() {
   //const { pending } = useFormStatus();
 
   return (
-    <Button 
+    <Button
       type="submit"
       color="primary"
       size="lg"
@@ -35,31 +35,31 @@ export default function LoginPage() {
         <CardBody>
           <form className="space-y-4" action={login}>
             <div className="">
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  label="メールアドレス"
-                  labelPlacement='outside'
-                  autoComplete="email"
-                  required
-                  placeholder="your@email.com"
-                  startContent={<FaEnvelope />}
-                  className='pb-4'
-                />
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                label="メールアドレス"
+                labelPlacement='outside'
+                autoComplete="email"
+                required
+                placeholder="your@email.com"
+                startContent={<FaEnvelope />}
+                className='pb-4'
+              />
             </div>
             <div className="">
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  label="パスワード"
-                  labelPlacement='outside'
-                  autoComplete="current-password"
-                  required
-                  placeholder="••••••••"
-                  startContent={<FaLock />}
-                />
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                label="パスワード"
+                labelPlacement='outside'
+                autoComplete="current-password"
+                required
+                placeholder="••••••••"
+                startContent={<FaLock />}
+              />
             </div>
             <SubmitButton />
           </form>

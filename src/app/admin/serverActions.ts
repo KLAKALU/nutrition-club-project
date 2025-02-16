@@ -6,14 +6,14 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 
 export async function logout() {
-    const supabase = await createClient()  
-    
+    const supabase = await createClient()
+
     const { error } = await supabase.auth.signOut({ scope: 'global' })
     if (error) {
-      redirect('/error')
+        redirect('/error')
     }
     redirect('/')
-  }
+}
 
 export async function getPlayerList() {
     const supabase = await createClient()

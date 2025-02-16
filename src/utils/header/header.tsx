@@ -1,6 +1,6 @@
 'use client'
-import {useState} from 'react';
-import { Navbar, NavbarContent,NavbarItem } from "@heroui/navbar";
+import { useState } from 'react';
+import { Navbar, NavbarContent, NavbarItem } from "@heroui/navbar";
 import { Button } from "@heroui/button";
 import { Card } from "@heroui/card";
 import { logout } from '@/app/admin/serverActions';
@@ -8,10 +8,10 @@ import { FaUser } from "react-icons/fa6";
 
 type HeaderProps = {
     userEmail?: string;
-  }
+}
 
 
-  export default function Header({ userEmail }: HeaderProps) {
+export default function Header({ userEmail }: HeaderProps) {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const toggleDropdown = () => {
@@ -28,7 +28,7 @@ type HeaderProps = {
             <NavbarContent className="w-full justify-end">
                 <div className="relative">
                     <NavbarItem>
-                        <button 
+                        <button
                             onClick={toggleDropdown}
                             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                         >
@@ -43,10 +43,10 @@ type HeaderProps = {
                                     {userEmail}
                                 </div>
                                 <hr className="border-gray-200" />
-                                <Button 
+                                <Button
                                     onClick={handleLogout}
                                     className="w-full justify-center"
-                                    color="primary" 
+                                    color="primary"
                                     variant="flat"
                                 >
                                     ログアウト

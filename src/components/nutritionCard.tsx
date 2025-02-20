@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import dayjs from 'dayjs';
 import { Input } from "@heroui/input";
-import { Card, CardHeader, Divider, Button, Textarea, Switch } from "@heroui/react"
+import { Card, CardHeader, Divider, Button, Textarea, Switch, addToast } from "@heroui/react"
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 
 import { BodyComposition, Nutrition, PlayerProfile, Comment } from '@/types/types';
@@ -13,11 +13,11 @@ import BodyCompositionGraph from '@/utils/graph/bodyCompositionGraph';
 import NutritionGraph from '@/utils/graph/nutritionGraph';
 
 type NutritionCardProps = {
-    nutrition: Nutrition[];
+    nutrition: Nutrition[] | undefined;
     selectPlayer: PlayerProfile;
     currentDate: Date;
-    bodyComposition: BodyComposition[];
-    commentList: Comment[];
+    bodyComposition: BodyComposition[] | undefined;
+    commentList: Comment[] | undefined;
     is_admin: boolean;
     onEditOpen: () => void | undefined;
 }
@@ -31,7 +31,20 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
     const [sheetIndex, setSheetIndex] = useState(0);
 
     if (!selectPlayer.non_training_load || !selectPlayer.training_load) {
-        alert("トレーニング負荷が設定されていません");
+        addToast({
+            title: "エラー",
+            description: "トレーニング負荷が設定されていません",
+            color: "danger",
+          })
+        return null;
+    }
+
+    if (!bodyComposition || !nutrition || !commentList) {
+        addToast({
+            title: "エラー",
+            description: "データが取得できませんでした",
+            color: "danger",
+          })
         return null;
     }
 
@@ -39,9 +52,9 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
 
     const nonTrainingDayNutrition: Nutrition[] = nutrition.filter((n) => !n.is_training_day);
 
-    const trainingDayNutritionRatio = trainingDayNutrition.map((n) => calculateNutrition(n, bodyComposition[0], selectPlayer.training_load!));
-
-    const nonTrainingDayNutritionRatio = nonTrainingDayNutrition.map((n) => calculateNutrition(n, bodyComposition[0], selectPlayer.non_training_load!));
+    const trainingDayNutritionRatio = trainingDayNutrition.map((n) => calculateNutrition(n, bodyComposition[0], selectPlayer.training_load!)).filter((n) => n !== undefined);
+    
+    const nonTrainingDayNutritionRatio = nonTrainingDayNutrition.map((n) => calculateNutrition(n, bodyComposition[0], selectPlayer.non_training_load!)).filter((n) => n !== undefined);
     //const comment = commentList.find((c) => dayjs(c.date).isSame(dayjs(currentDate), 'day'));
 
     //const currentIndex = commentList.length - 1 - sheetIndex;
@@ -105,7 +118,7 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
     };
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-6 w-full">
             <div className="flex gap-2">
                 <Button onClick={decrementSheetDateMonth} isIconOnly aria-label="MonthDecrement" color="primary" variant="bordered">
                     <FaAngleLeft />
@@ -128,8 +141,8 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                     </Switch>
                 </div>
                 <div className="flex flex-row h-[35vh] gap-4 w-full">
-                    <div className="w-[40%]">
-                        {trainingDayNutrition.length ? (
+                    <div className="w-[50%]">
+                        {trainingDayNutritionRatio ? (
                             isGraphMode ?
                                 <NutritionGraph graphprops={trainingDayNutritionRatio} /> :
                                 renderNutritionData(trainingDayNutrition[-sheetIndex])
@@ -137,8 +150,8 @@ export default function NutritionCard({ nutrition, selectPlayer, currentDate, bo
                             <div>データがありません</div>
                         )}
                     </div>
-                    <div className="w-[40%]">
-                        {nonTrainingDayNutrition.length ? (
+                    <div className="w-[50%]">
+                        {nonTrainingDayNutritionRatio ? (
                             isGraphMode ?
                                 <NutritionGraph graphprops={nonTrainingDayNutritionRatio} /> :
                                 renderNutritionData(nonTrainingDayNutrition[-sheetIndex])

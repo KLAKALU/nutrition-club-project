@@ -28,17 +28,17 @@ import UserList from '@/utils/userlist/userlist';
 
 export default function Home() {
 
-  const [userData, setUserData] = useState<User>();
+  const [userData, setUserData] = useState<User | undefined>(undefined);
 
-  const [selectPlayer, setSelectPlayer] = useState<PlayerProfile | null>(null);
+  const [selectPlayer, setSelectPlayer] = useState<PlayerProfile | undefined>(undefined);
 
-  const [players, setPlayers] = useState<PlayerProfile[]>([]);
+  const [players, setPlayers] = useState<PlayerProfile[] | undefined>([]);
 
-  const [bodyComposition, setBodyComposition] = useState<BodyComposition[]>([]);
+  const [bodyComposition, setBodyComposition] = useState<BodyComposition[] | undefined>(undefined);
 
-  const [comment, setComment] = useState<Comment[]>([]);
+  const [comment, setComment] = useState<Comment[] | undefined>(undefined);
 
-  const [nutrition, setNutrition] = useState<Nutrition[]>([]);
+  const [nutrition, setNutrition] = useState<Nutrition[] | undefined>(undefined);
 
   const [currentDate, setCurrentDate] = useState<Date>(dayjs().toDate());
 
@@ -57,7 +57,6 @@ export default function Home() {
       }
       setUserData(user);
     }
-    fetchUserData();
 
     const fetchPlayerList = async () => {
       try {
@@ -67,7 +66,7 @@ export default function Home() {
         alert("選手データの取得に失敗しました");
       }
     };
-    fetchPlayerList();
+    Promise.all([fetchUserData(), fetchPlayerList()]);
   }, []);
   console.log(players);
 
@@ -85,7 +84,6 @@ export default function Home() {
         alert("体組成データの取得に失敗しました");
       }
     }
-    fetchBodyComposition();
 
     const fetchNutrition = async () => {
       try {
@@ -96,7 +94,6 @@ export default function Home() {
         alert("栄養データの取得に失敗しました");
       }
     }
-    fetchNutrition();
 
     const fetchComment = async () => {
       try {
@@ -107,11 +104,10 @@ export default function Home() {
         alert("コメントの取得に失敗しました");
       }
     }
-    fetchComment();
-    if (comment.length === 0) {
-      setEditComment(comment[0].comment);
-    }
-  }, [selectPlayer, currentDate, comment]);
+
+    Promise.all([fetchBodyComposition(), fetchNutrition(), fetchComment()]);
+
+  }, [selectPlayer, currentDate]);
 
   console.log(bodyComposition);
 
@@ -120,6 +116,9 @@ export default function Home() {
   console.log(comment);
 
   const handleSelectPlayerChange = (newPlayer: PlayerProfile) => {
+    if (!players) {
+      return;
+    }
     setSelectPlayer(newPlayer);
     const selectedUser = players.find((player) => player.id === newPlayer.id);
     if (!selectedUser?.training_load) {
@@ -167,7 +166,7 @@ export default function Home() {
                       <Button color="danger" variant="light" onPress={onClose}>
                         閉じる
                       </Button>
-                      <Button color="primary" onPress={() => { onClose(); uploadComment(selectPlayer.id, currentDate, editComment); setComment(comment.map((comment) => { if (comment.date === currentDate) { return { ...comment, comment: editComment }; } return comment; })); }}>
+                      <Button color="primary" onPress={() => { if (userData) { onClose(); uploadComment(userData.id, selectPlayer.id, currentDate, editComment); setComment(comment?.map((comment) => { if (comment.date === currentDate) { return { ...comment, comment: editComment }; } return comment; }) ?? []); } }}>
                         変更
                       </Button>
                     </DrawerFooter>

@@ -112,7 +112,7 @@ export default function BodyCompositionGraph({ bodyComposition }: BodyGraphProps
     }
   };
   return (
-    <div className="w-[500px]">
+    <div className="">
       <Chart type={"bar"} data={data} options={options} />
     </div>
   );

@@ -3,6 +3,8 @@ import { parse } from 'csv-parse/sync';
 import { createClient } from '@/utils/supabase/client';
 import dayjs from "dayjs";
 
+import { addToast } from '@heroui/react';
+
 import { Nutrition, BodyComposition } from '@/types/types';
 
 function dataToObject(csv: string) {
@@ -32,6 +34,14 @@ function dataToObject(csv: string) {
 }
 
 export function calculateNutrition(nutrition: Nutrition, playerBodyComposition: BodyComposition, training_load: number) {
+    if (!playerBodyComposition) {
+        addToast({
+            title: 'エラー',
+            description: '体組成データがありません',
+            color: 'danger',
+        });
+        return;
+    }
     const nonFatBodyWeight = playerBodyComposition.weight * (1 - (playerBodyComposition.body_fat / 100));
     const totalEnergy = nonFatBodyWeight * 28.5 * training_load;
     const totalProtein = nonFatBodyWeight * 2.2;
@@ -159,7 +169,7 @@ export function uploadComment(userID: string, date: Date, comment: string) {
     const upload = async () => {
         const { error } = await supabase
             .from('comment')
-            .insert([{ player_id: userID, date: date, comment: comment }]);
+            .insert({ player_id: userID, date: date, comment: comment });
         if (error) {
             console.log(error);
             alert("コメントのアップロードに失敗しました");

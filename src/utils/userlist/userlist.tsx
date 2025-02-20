@@ -6,13 +6,16 @@ import { useState } from "react"
 
 interface ChildProps {
     selectPlayerChange: (value: PlayerProfile) => void;
-    playerList: PlayerProfile[];
+    playerList: PlayerProfile[] | undefined;
 }
 
 export default function UserList({ selectPlayerChange, playerList }: ChildProps) {
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
 
     const handleUserChange = (selectPlayerId: string) => {
+        if (!playerList) {
+            return
+        }
         setSelectedUserId(selectPlayerId)
         const selectUser = playerList.find((user) => user.id === selectPlayerId)
         if (!selectUser) {
@@ -22,7 +25,7 @@ export default function UserList({ selectPlayerChange, playerList }: ChildProps)
     }
 
     const  TopContent = () => {
-        const player = playerList.find((player) => player.id === selectedUserId)
+        const player = playerList ? playerList.find((player) => player.id === selectedUserId) : undefined
         console.log(player ? player.last_name : "No Player selected")
         if (!player) {
             return (

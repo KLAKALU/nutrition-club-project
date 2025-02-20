@@ -166,7 +166,7 @@ export default function Home() {
                       <Button color="danger" variant="light" onPress={onClose}>
                         閉じる
                       </Button>
-                      <Button color="primary" onPress={() => { onClose(); uploadComment(selectPlayer.id, currentDate, editComment); setComment(comment?.map((comment) => { if (comment.date === currentDate) { return { ...comment, comment: editComment }; } return comment; }) ?? []); }}>
+                      <Button color="primary" onPress={() => { if (userData) { onClose(); uploadComment(userData.id, selectPlayer.id, currentDate, editComment); setComment(comment?.map((comment) => { if (comment.date === currentDate) { return { ...comment, comment: editComment }; } return comment; }) ?? []); } }}>
                         変更
                       </Button>
                     </DrawerFooter>

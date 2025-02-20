@@ -164,12 +164,12 @@ export function uploadBodyComposition(
     alert("体組成データを保存しました");
 }
 
-export function uploadComment(userID: string, date: Date, comment: string) {
+export function uploadComment(authorID: string, playerID: string, date: Date, comment: string) {
     const supabase = createClient();
     const upload = async () => {
         const { error } = await supabase
             .from('comment')
-            .insert({ player_id: userID, date: date, comment: comment });
+            .upsert({ player_id: playerID,author_id:authorID,  date: date, comment: comment });
         if (error) {
             console.log(error);
             alert("コメントのアップロードに失敗しました");
